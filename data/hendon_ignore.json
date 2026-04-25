@@ -2,6 +2,7 @@
   "_comment": "List of normalized 'last|first' keys to never look up / always treat as missing. Entries normalized via the scraper's _norm_key (lowercase, accents stripped, non-letters removed).",
   "keys": [
     "a|chae",
-    "dapollonio|matthew"
+    "dapollonio|matthew",
+    "tam|david"
   ]
 }
