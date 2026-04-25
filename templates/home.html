@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Brian Winter Projects{% endblock %}
+{% block nav_home %}active{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-4">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-heading text-gold mb-2" style="font-size:2.2rem;">
+            <span style="margin-right:.4rem;">&spades;</span> Welcome to Brian Winter's Projects
+        </h1>
+        <p class="text-secondary" style="font-size:1rem;">
+            Please select an option above, or pick one below.
+        </p>
+    </div>
+
+    <div class="row g-3 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a href="/leaderboard" class="home-card">
+                <div class="home-card__icon">&#127942;</div>
+                <div class="home-card__title">RunGood ELO</div>
+                <div class="home-card__desc">Player rankings and ratings from the RunGood Poker Series.</div>
+            </a>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a href="/compare" class="home-card">
+                <div class="home-card__icon">&#9878;</div>
+                <div class="home-card__title">Compare</div>
+                <div class="home-card__desc">Compare two players head-to-head across stats and ratings.</div>
+            </a>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a href="/table-scout" class="home-card">
+                <div class="home-card__icon">&#128373;</div>
+                <div class="home-card__title">Table Scout</div>
+                <div class="home-card__desc">Score the difficulty of an 8-handed table at a glance.</div>
+            </a>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <a href="/cash-sort" class="home-card">
+                <div class="home-card__icon">&#128176;</div>
+                <div class="home-card__title">Media Helper</div>
+                <div class="home-card__desc">Upload a tournament entry list and rank players by Hendon Mob earnings.</div>
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

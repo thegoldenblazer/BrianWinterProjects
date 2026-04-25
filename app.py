@@ -70,6 +70,11 @@ def reload_data():
 
 
 @app.route("/")
+def home():
+    return render_template("home.html")
+
+
+@app.route("/leaderboard")
 def leaderboard():
     data = get_data()
     min_events = request.args.get("min_events", 3, type=int)

@@ -921,3 +921,52 @@ a:hover { color: var(--rg-gold); }
   .player-hero__name { font-size: 1.6rem; }
   .player-hero { padding: 1.5rem 1rem; }
 }
+
+
+/* ============================================================
+   Home page cards
+   ============================================================ */
+.home-card {
+  display: block;
+  padding: 1.4rem 1.2rem;
+  background: var(--rg-panel);
+  border: 1px solid var(--rg-border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  text-align: center;
+}
+.home-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--rg-gold, #d4af37);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  color: inherit;
+  text-decoration: none;
+}
+.home-card__icon {
+  font-size: 2.2rem;
+  margin-bottom: .5rem;
+}
+.home-card__title {
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--rg-gold, #d4af37);
+  margin-bottom: .35rem;
+}
+.home-card__desc {
+  font-size: .85rem;
+  color: var(--rg-text-muted, #9999b3);
+  line-height: 1.35;
+}
+
+
+/* Home page cards */
+.home-card { display: block; padding: 1.4rem 1.2rem; background: var(--rg-panel); border: 1px solid var(--rg-border); border-radius: 14px; text-decoration: none; color: inherit; height: 100%; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; text-align: center; }
+.home-card:hover { transform: translateY(-3px); border-color: var(--rg-gold, #d4af37); box-shadow: 0 8px 24px rgba(0,0,0,.35); color: inherit; text-decoration: none; }
+.home-card__icon { font-size: 2.2rem; margin-bottom: .5rem; }
+.home-card__title { font-family: 'Barlow Semi Condensed', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--rg-gold, #d4af37); margin-bottom: .35rem; }
+.home-card__desc { font-size: .85rem; color: var(--rg-text-muted, #9999b3); line-height: 1.35; }
+
