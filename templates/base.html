@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Brian Winter Projects{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>♠</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="rg-navbar">
+        <a class="rg-navbar__brand" href="/">
+            <span class="suit">♠</span> Brian Winter Projects
+        </a>
+
+        <div class="rg-navbar__links" id="navLinks">
+            <a href="/" class="rg-navbar__link {% block nav_leaderboard %}{% endblock %}">RunGood ELO</a>
+            <a href="/compare" class="rg-navbar__link {% block nav_compare %}{% endblock %}">Compare</a>
+            <a href="/table-scout" class="rg-navbar__link {% block nav_table_scout %}{% endblock %}">Table Scout</a>
+            <a href="/cash-sort" class="rg-navbar__link {% block nav_cash_sort %}{% endblock %}">Media Helper</a>
+        </div>
+
+        <div class="nav-search">
+            <span class="nav-search__icon">&#128269;</span>
+            <input type="text" class="nav-search__input" id="playerSearch"
+                   placeholder="Search players..." autocomplete="off">
+            <div class="nav-search__results" id="searchResults"></div>
+        </div>
+
+        <button class="rg-navbar__toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+    </nav>
+
+    <!-- Page content -->
+    <div class="page-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="rg-footer">
+        {% block footer %}
+        <p>Rankings computed using Microsoft TrueSkill Bayesian rating system, displayed as Poker ELO (×100 scale).<br>
+        Data from <a href="https://www.rungood.com/blogs/news-1">RunGood Poker Series</a>.</p>
+        {% endblock %}
+        {% block footer_extra %}{% endblock %}
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- Mobile nav toggle ---
+        document.getElementById('navToggle').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('show');
+        });
+
+        // --- Live search ---
+        const searchInput = document.getElementById('playerSearch');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+            if (q.length < 2) { searchResults.classList.remove('show'); return; }
+            searchTimeout = setTimeout(() => {
+                fetch('/api/search?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.length) { searchResults.classList.remove('show'); return; }
+                        searchResults.innerHTML = data.map(p => {
+                            const name = p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                            return `<a href="/player/${encodeURIComponent(p.name)}">
+                                ${name}
+                                <span class="sr-meta">${p.rating} · ${p.cashes} cashes</span>
+                            </a>`;
+                        }).join('');
+                        searchResults.classList.add('show');
+                    });
+            }, 250);
+        });
+
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') searchResults.classList.remove('show');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.classList.remove('show');
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

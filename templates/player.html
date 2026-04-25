@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block title %}{{ player.player }} — RunGood TrueSkill{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+        integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+
+    <!-- Player hero -->
+    <div class="player-hero mb-3">
+        <a href="/" class="player-hero__back">← Leaderboard</a>
+        <h1 class="player-hero__name">{{ player.player }}</h1>
+        <span class="player-hero__rank">Rank #{{ player.rank }}</span>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stat-grid mb-3">
+        <div class="stat-card stat-card--red">
+            <div class="stat-card__icon">📊</div>
+            <div class="stat-card__number">{{ player.conservative_rating | elo }}</div>
+            <div class="stat-card__label">Poker ELO</div>
+        </div>
+        <div class="stat-card stat-card--gold">
+            <div class="stat-card__icon">🎯</div>
+            <div class="stat-card__number">{{ player.tournaments_played }}</div>
+            <div class="stat-card__label">Cashes</div>
+        </div>
+        <div class="stat-card stat-card--blue">
+            <div class="stat-card__icon">🏆</div>
+            <div class="stat-card__number">{{ player.wins }}</div>
+            <div class="stat-card__label">Wins</div>
+        </div>
+        <div class="stat-card stat-card--green">
+            <div class="stat-card__icon">💰</div>
+            <div class="stat-card__number">${{ "{:,.0f}".format(player.total_winnings) }}</div>
+            <div class="stat-card__label">Total Winnings</div>
+        </div>
+        <div class="stat-card stat-card--orange">
+            <div class="stat-card__icon">🥇</div>
+            <div class="stat-card__number">{{ player.best_finish }}</div>
+            <div class="stat-card__label">Best Finish</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__icon">📅</div>
+            <div class="stat-card__number" style="font-size:1.3rem">{{ player.last_active | fmtdate }}</div>
+            <div class="stat-card__label">Last Active</div>
+        </div>
+    </div>
+
+    <!-- Rating history chart -->
+    <div class="chart-card mb-3">
+        <div class="chart-card__title">Poker ELO History</div>
+        <canvas id="ratingChart" height="100"></canvas>
+    </div>
+
+    <!-- Compare CTA -->
+    <div class="mb-3" style="display:flex; gap:.75rem; flex-wrap:wrap;">
+        <a href="/compare?players={{ player.player | urlencode }}" class="filter-btn filter-btn--primary"
+           style="display:inline-flex; align-items:center; gap:.4rem; text-decoration:none; padding:.5rem 1.25rem;">
+            Compare {{ player.player.split(' ')[0] }} with…
+        </a>
+    </div>
+
+    <!-- Tournament history -->
+    <div class="rg-table-wrap">
+        <div style="padding: 1rem 1rem .5rem;">
+            <span class="section-title">Tournament History</span>
+        </div>
+        <table class="rg-table">
+            <thead>
+                <tr>
+                    <th style="width:40px">#</th>
+                    <th>Date</th>
+                    <th>Tournament</th>
+                    <th>Place</th>
+                    <th>Prize</th>
+                    <th>Poker ELO</th>
+                    <th>ELO Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in player.history | reverse %}
+                <tr class="{{ 'row-win' if h.place == 1 }}">
+                    <td class="text-muted">{{ loop.revindex }}</td>
+                    <td class="col-date">{{ h.date | fmtdate }}</td>
+                    <td>{{ h.tournament }}</td>
+                    <td class="col-place">
+                        {% if h.place == 1 %}🏆 {% endif %}{{ h.place }}
+                    </td>
+                    <td class="col-money">${{ "{:,.0f}".format(h.prize) }}</td>
+                    <td>{{ h.conservative | elo }}</td>
+                    <td>
+                        {% if h.mu_change > 0 %}
+                        <span class="change-badge change-badge--pos">+{{ "%.0f" | format(h.mu_change * 100) }}</span>
+                        {% elif h.mu_change < 0 %}
+                        <span class="change-badge change-badge--neg">{{ "%.0f" | format(h.mu_change * 100) }}</span>
+                        {% else %}
+                        <span class="change-badge change-badge--zero">0.00</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const historyData = {{ player_history | tojson }};
+
+    const labels = historyData.map((h, i) => {
+        const raw = h.date || `Event ${i + 1}`;
+        // Normalize date display
+        try {
+            for (const fmt of [/^(\d{2})\/(\d{2})\/(\d{4})$/, null]) {
+                const m = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                if (m) {
+                    const d = new Date(+m[3], +m[1]-1, +m[2]);
+                    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+                }
+                break;
+            }
+        } catch(e) {}
+        return raw;
+    });
+    const muData = historyData.map(h => h.mu * 100);
+    const upperBand = historyData.map(h => (h.mu + h.sigma) * 100);
+    const lowerBand = historyData.map(h => (h.mu - h.sigma) * 100);
+    const conservativeData = historyData.map(h => h.conservative * 100);
+
+    new Chart(document.getElementById('ratingChart'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'μ + σ',
+                    data: upperBand,
+                    borderColor: 'rgba(78,168,222,0.15)',
+                    backgroundColor: 'rgba(78,168,222,0.04)',
+                    fill: '+1',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    tension: 0.3,
+                },
+                {
+                    label: 'μ (Skill)',
+                    data: muData,
+                    borderColor: '#4ea8de',
+                    backgroundColor: 'rgba(78,168,222,0.08)',
+                    fill: false,
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#4ea8de',
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#fff',
+                    tension: 0.3,
+                },
+                {
+                    label: 'μ − σ',
+                    data: lowerBand,
+                    borderColor: 'rgba(78,168,222,0.15)',
+                    backgroundColor: 'rgba(78,168,222,0.04)',
+                    fill: false,
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    tension: 0.3,
+                },
+                {
+                    label: 'Conservative (Poker ELO)',
+                    data: conservativeData,
+                    borderColor: '#e5293e',
+                    borderDash: [6, 4],
+                    fill: false,
+                    borderWidth: 1.5,
+                    pointRadius: 0,
+                    tension: 0.3,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                tooltip: {
+                    backgroundColor: '#171730',
+                    borderColor: '#2a2a4a',
+                    borderWidth: 1,
+                    titleFont: { family: "'Barlow Semi Condensed', sans-serif", weight: '700' },
+                    bodyFont: { family: "'Inter', sans-serif" },
+                    padding: 12,
+                    callbacks: {
+                        afterTitle(items) {
+                            const idx = items[0].dataIndex;
+                            const h = historyData[idx];
+                            return h.tournament + ' · Place: ' + h.place + ' · $' + h.prize.toLocaleString();
+                        },
+                        label(ctx) {
+                            return ctx.dataset.label + ': ' + Math.round(ctx.parsed.y);
+                        }
+                    }
+                },
+                legend: {
+                    labels: { color: '#9a9abb', font: { family: "'Inter', sans-serif", size: 12 } }
+                },
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#6b6b8a', maxTicksLimit: 20, maxRotation: 45, font: { size: 11 } },
+                    grid: { color: '#2a2a4a' },
+                },
+                y: {
+                    ticks: { color: '#6b6b8a', font: { size: 11 } },
+                    grid: { color: '#2a2a4a' },
+                },
+            }
+        }
+    });
+</script>
+{% endblock %}

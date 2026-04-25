@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block title %}Compare Players — RunGood TrueSkill{% endblock %}
+{% block nav_compare %}active{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+        integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+
+    <h1 class="fw-heading text-gold mb-3" style="font-size:1.6rem;">
+        {% if players | length >= 2 %}
+            Player Comparison
+        {% else %}
+            Compare Players
+        {% endif %}
+    </h1>
+
+    <!-- Player selector -->
+    <div class="compare-search-area mb-3">
+        <p class="text-secondary" style="font-size:.85rem; margin-bottom:.75rem;">
+            Select 2–4 players to compare their stats and rating history.
+        </p>
+        <div class="row g-2 align-items-end" id="playerInputs">
+            {% for i in range(4) %}
+            <div class="col-md-3 col-6">
+                <div class="compare-player-input">
+                    <input type="text" class="cp-input" placeholder="Player {{ i + 1 }}..."
+                           data-slot="{{ i }}"
+                           value="{{ players[i].player if i < players | length else '' }}"
+                           autocomplete="off">
+                    <div class="dropdown" data-slot="{{ i }}"></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="col-auto">
+                <button class="filter-btn filter-btn--primary" id="compareBtn">Compare</button>
+            </div>
+        </div>
+    </div>
+
+    {% if players | length >= 2 %}
+
+    <!-- Side-by-side stats -->
+    <div class="compare-grid mb-3">
+        {% set colors = ['var(--rg-blue)', 'var(--rg-red)', 'var(--rg-gold)', 'var(--rg-green)'] %}
+        {% for p in players %}
+        <div class="compare-stat-col">
+            <div class="compare-stat-col__name" style="border-bottom-color: {{ colors[loop.index0] }};">
+                <a href="/player/{{ p.player | urlencode }}" class="player-link" style="color: {{ colors[loop.index0] }} !important;">
+                    {{ p.player }}
+                </a>
+            </div>
+            <div class="stat-grid" style="grid-template-columns:1fr;">
+                <div class="stat-card stat-card--red">
+                    <div class="stat-card__number" style="font-size:1.5rem;">{{ p.conservative_rating | elo }}</div>
+                    <div class="stat-card__label">Poker ELO</div>
+                </div>
+                <div class="stat-card stat-card--gold">
+                    <div class="stat-card__number" style="font-size:1.5rem;">{{ p.tournaments_played }}</div>
+                    <div class="stat-card__label">Cashes</div>
+                </div>
+                <div class="stat-card stat-card--blue">
+                    <div class="stat-card__number" style="font-size:1.5rem;">{{ p.wins }}</div>
+                    <div class="stat-card__label">Wins</div>
+                </div>
+                <div class="stat-card stat-card--green">
+                    <div class="stat-card__number" style="font-size:1.3rem;">${{ "{:,.0f}".format(p.total_winnings) }}</div>
+                    <div class="stat-card__label">Winnings</div>
+                </div>
+                <div class="stat-card stat-card--orange">
+                    <div class="stat-card__number" style="font-size:1.5rem;">{{ p.best_finish }}</div>
+                    <div class="stat-card__label">Best Finish</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Overlaid rating chart -->
+    <div class="chart-card mb-3">
+        <div class="chart-card__title">Poker ELO History Comparison</div>
+        <canvas id="compareChart" height="120"></canvas>
+    </div>
+
+    <!-- Head-to-head stat comparison table -->
+    <div class="rg-table-wrap mb-3">
+        <div style="padding: 1rem 1rem .5rem;">
+            <span class="section-title">Stat Comparison</span>
+        </div>
+        <table class="rg-table">
+            <thead>
+                <tr>
+                    <th>Stat</th>
+                    {% for p in players %}
+                    <th style="color: {{ colors[loop.index0] }};">{{ p.player.split(' ')[0] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Poker ELO</td>
+                    {% for p in players %}<td class="fw-heading">{{ p.conservative_rating | elo }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Rank</td>
+                    {% for p in players %}<td>#{{ p.rank }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Cashes</td>
+                    {% for p in players %}<td>{{ p.tournaments_played }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Wins</td>
+                    {% for p in players %}<td>{{ p.wins }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Total Winnings</td>
+                    {% for p in players %}<td class="col-money">${{ "{:,.0f}".format(p.total_winnings) }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Best Finish</td>
+                    {% for p in players %}<td>{{ p.best_finish }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td>Last Active</td>
+                    {% for p in players %}<td class="col-date">{{ p.last_active | fmtdate }}</td>{% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% elif players | length == 1 %}
+    <div class="compare-search-area mt-3 mb-3" style="text-align:center; padding:3rem;">
+        <p class="text-secondary">Add at least one more player to start a comparison.</p>
+    </div>
+    {% else %}
+    <div class="compare-search-area mt-3 mb-3" style="text-align:center; padding:3rem;">
+        <p class="text-secondary">Use the search fields above or select players from the leaderboard to compare.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // --- Player search dropdowns ---
+    const inputs = document.querySelectorAll('.cp-input');
+    const dropdowns = document.querySelectorAll('.compare-player-input .dropdown');
+    let cpTimeout;
+
+    inputs.forEach(input => {
+        const slot = input.dataset.slot;
+        const dd = document.querySelector(`.dropdown[data-slot="${slot}"]`);
+
+        input.addEventListener('input', function () {
+            clearTimeout(cpTimeout);
+            const q = this.value.trim();
+            if (q.length < 2) { dd.classList.remove('show'); return; }
+            cpTimeout = setTimeout(() => {
+                fetch('/api/search?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.length) { dd.classList.remove('show'); return; }
+                        dd.innerHTML = data.map(p => {
+                            const name = p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                            return `<a href="#" data-name="${name}">${name} <small style="color:var(--text-muted)">(${p.rating})</small></a>`;
+                        }).join('');
+                        dd.classList.add('show');
+
+                        dd.querySelectorAll('a').forEach(a => {
+                            a.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                input.value = this.dataset.name;
+                                dd.classList.remove('show');
+                            });
+                        });
+                    });
+            }, 250);
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') dd.classList.remove('show');
+        });
+    });
+
+    document.addEventListener('click', function (e) {
+        dropdowns.forEach(dd => {
+            if (!dd.contains(e.target) && !e.target.classList.contains('cp-input')) {
+                dd.classList.remove('show');
+            }
+        });
+    });
+
+    // --- Compare button ---
+    document.getElementById('compareBtn').addEventListener('click', () => {
+        const names = [...inputs].map(i => i.value.trim()).filter(v => v.length > 0);
+        if (names.length < 2) { alert('Select at least 2 players'); return; }
+        const params = names.map(n => 'players=' + encodeURIComponent(n)).join('&');
+        window.location.href = '/compare?' + params;
+    });
+
+    // --- Overlaid chart ---
+    {% if players | length >= 2 %}
+    const histories = {{ histories | tojson }};
+    const chartColors = ['#4ea8de', '#e5293e', '#f5b731', '#22c55e'];
+    const playerNames = Object.keys(histories);
+
+    // Build a merged timeline of all dates
+    const allDates = new Set();
+    playerNames.forEach(name => {
+        histories[name].forEach(h => allDates.add(h.date));
+    });
+    // Sort dates chronologically, normalizing formats
+    function parseDateVal(d) {
+        const m1 = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (m1) return new Date(+m1[3], +m1[1]-1, +m1[2]);
+        return new Date(d);
+    }
+    const sortedDates = [...allDates].sort((a,b) => parseDateVal(a) - parseDateVal(b));
+
+    // Format dates for display
+    function fmtDate(d) {
+        try {
+            const dt = parseDateVal(d);
+            return dt.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+        } catch(e) { return d; }
+    }
+
+    // Build datasets
+    const datasets = playerNames.map((name, i) => {
+        const dateMap = {};
+        histories[name].forEach(h => { dateMap[h.date] = h.conservative; });
+
+        // Fill data across the shared timeline (NaN for missing dates)
+        const data = sortedDates.map(d => dateMap[d] !== undefined ? dateMap[d] * 100 : NaN);
+
+        return {
+            label: name,
+            data: data,
+            borderColor: chartColors[i % chartColors.length],
+            backgroundColor: chartColors[i % chartColors.length] + '18',
+            borderWidth: 2.5,
+            pointRadius: 2,
+            pointHoverRadius: 5,
+            tension: 0.3,
+            spanGaps: true,
+        };
+    });
+
+    new Chart(document.getElementById('compareChart'), {
+        type: 'line',
+        data: { labels: sortedDates.map(fmtDate), datasets },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                tooltip: {
+                    backgroundColor: '#171730',
+                    borderColor: '#2a2a4a',
+                    borderWidth: 1,
+                    titleFont: { family: "'Barlow Semi Condensed', sans-serif", weight: '700' },
+                    bodyFont: { family: "'Inter', sans-serif" },
+                    padding: 12,
+                },
+                legend: {
+                    labels: { color: '#9a9abb', font: { family: "'Inter', sans-serif", size: 12 } }
+                },
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#6b6b8a', maxTicksLimit: 20, maxRotation: 45, font: { size: 11 } },
+                    grid: { color: '#2a2a4a' },
+                },
+                y: {
+                    ticks: { color: '#6b6b8a', font: { size: 11 } },
+                    grid: { color: '#2a2a4a' },
+                    title: { display: true, text: 'Poker ELO', color: '#6b6b8a' },
+                },
+            }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}

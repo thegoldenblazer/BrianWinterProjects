@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% block title %}Table Scout — Brian Winter Projects{% endblock %}
+{% block nav_table_scout %}active{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+        integrity="sha384-NrKB+u6Ts6AtkIhwPixiKTzgSKNblyhlk0Sohlgar9UHUBzai/sgnNNWWd291xqt" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+
+    <h1 class="fw-heading text-gold mb-2" style="font-size:1.6rem;">
+        <span style="margin-right:.35rem;">&#128373;</span> Table Scout
+    </h1>
+    <p class="text-secondary mb-3" style="font-size:.85rem;">
+        Enter up to 8 players at your table to see their ratings and get a table difficulty score.
+        Unknown players are rated at the median.
+    </p>
+
+    <!-- Player inputs -->
+    <div class="ts-input-area mb-3">
+        <div class="ts-input-grid" id="tsInputGrid">
+            {% for i in range(8) %}
+            <div class="ts-slot" data-slot="{{ i }}">
+                <label class="ts-slot__label">Seat {{ i + 1 }}</label>
+                <div class="compare-player-input">
+                    <input type="text" class="cp-input ts-player-input"
+                           placeholder="Player name..."
+                           data-slot="{{ i }}" autocomplete="off">
+                    <div class="dropdown" data-slot="{{ i }}"></div>
+                </div>
+                <!-- Fuzzy suggestion banner (hidden by default) -->
+                <div class="ts-suggestion" data-slot="{{ i }}" style="display:none;">
+                    <span class="ts-suggestion__text"></span>
+                    <button class="ts-suggestion__yes">Yes</button>
+                    <button class="ts-suggestion__no">No</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-2" style="display:flex; gap:.75rem; align-items:center; flex-wrap:wrap;">
+            <button class="filter-btn filter-btn--primary" id="scoutBtn">
+                Scout Table
+            </button>
+            <button class="filter-btn filter-btn--ghost" id="clearBtn">
+                Clear All
+            </button>
+        </div>
+    </div>
+
+    <!-- Results area (hidden until scouted) -->
+    <div id="tsResults" style="display:none;">
+
+        <!-- Table difficulty gauge -->
+        <div class="ts-difficulty-card mb-3">
+            <div class="ts-difficulty-card__header">
+                <span class="section-title" style="margin-bottom:0;">Table Difficulty</span>
+                <span class="ts-difficulty-card__avg" id="tsAvgRating"></span>
+            </div>
+            <div class="ts-gauge">
+                <div class="ts-gauge__track">
+                    <div class="ts-gauge__fill" id="tsGaugeFill"></div>
+                </div>
+                <div class="ts-gauge__labels">
+                    <span>Easy</span>
+                    <span class="ts-gauge__score" id="tsScore"></span>
+                    <span>Tough</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player cards -->
+        <div class="ts-players-grid" id="tsPlayersGrid"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const inputs = document.querySelectorAll('.ts-player-input');
+    const dropdowns = document.querySelectorAll('.ts-slot .dropdown');
+    const resultsDiv = document.getElementById('tsResults');
+    const playersGrid = document.getElementById('tsPlayersGrid');
+    let searchTimeout;
+
+    // --- Autocomplete with fuzzy matching ---
+    inputs.forEach(input => {
+        const slot = input.dataset.slot;
+        const dd = document.querySelector(`.ts-slot .dropdown[data-slot="${slot}"]`);
+        const suggBanner = document.querySelector(`.ts-suggestion[data-slot="${slot}"]`);
+
+        input.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+            suggBanner.style.display = 'none';
+            if (q.length < 2) { dd.classList.remove('show'); return; }
+
+            searchTimeout = setTimeout(() => {
+                fetch('/api/search?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.length) { dd.classList.remove('show'); return; }
+                        dd.innerHTML = data.map(p => {
+                            const safe = p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+                            return '<a href="#" data-name="' + safe + '">' + safe +
+                                   ' <small style="color:var(--text-muted)">(' + p.rating + ')</small></a>';
+                        }).join('');
+                        dd.classList.add('show');
+
+                        dd.querySelectorAll('a').forEach(a => {
+                            a.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                input.value = this.dataset.name;
+                                dd.classList.remove('show');
+                            });
+                        });
+                    });
+            }, 250);
+        });
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') dd.classList.remove('show');
+        });
+
+        // On blur, check for fuzzy match if name doesn't match exactly
+        input.addEventListener('blur', function() {
+            const q = this.value.trim();
+            if (q.length < 2) return;
+
+            setTimeout(() => {
+                fetch('/api/fuzzy-match?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.exact) return; // exact match, no suggestion needed
+                        if (data.suggestions && data.suggestions.length > 0) {
+                            const best = data.suggestions[0];
+                            if (best.score >= 70 && best.name.toLowerCase() !== q.toLowerCase()) {
+                                const textEl = suggBanner.querySelector('.ts-suggestion__text');
+                                textEl.textContent = 'Did you mean ' + best.name + '?';
+                                suggBanner.style.display = 'flex';
+
+                                const yesBtn = suggBanner.querySelector('.ts-suggestion__yes');
+                                const noBtn = suggBanner.querySelector('.ts-suggestion__no');
+
+                                const yesHandler = () => {
+                                    input.value = best.name;
+                                    suggBanner.style.display = 'none';
+                                    yesBtn.removeEventListener('click', yesHandler);
+                                };
+                                const noHandler = () => {
+                                    suggBanner.style.display = 'none';
+                                    noBtn.removeEventListener('click', noHandler);
+                                };
+
+                                yesBtn.addEventListener('click', yesHandler);
+                                noBtn.addEventListener('click', noHandler);
+                            }
+                        }
+                    });
+            }, 200);
+        });
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function(e) {
+        dropdowns.forEach(dd => {
+            if (!dd.contains(e.target) && !e.target.classList.contains('ts-player-input')) {
+                dd.classList.remove('show');
+            }
+        });
+    });
+
+    // --- Clear button ---
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        inputs.forEach(input => { input.value = ''; });
+        document.querySelectorAll('.ts-suggestion').forEach(s => { s.style.display = 'none'; });
+        resultsDiv.style.display = 'none';
+    });
+
+    // --- Scout button ---
+    document.getElementById('scoutBtn').addEventListener('click', scoutTable);
+
+    function scoutTable() {
+        const names = [...inputs].map(i => i.value.trim()).filter(v => v.length > 0);
+        if (names.length === 0) { alert('Enter at least one player name.'); return; }
+
+        const btn = document.getElementById('scoutBtn');
+        btn.disabled = true;
+        btn.textContent = 'Scouting...';
+
+        fetch('/api/table-scout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ players: names }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.textContent = 'Scout Table';
+
+            if (data.error) { alert(data.error); return; }
+            renderResults(data);
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = 'Scout Table';
+        });
+    }
+
+    function renderResults(data) {
+        resultsDiv.style.display = 'block';
+
+        // Difficulty gauge
+        const diff = data.table_difficulty;
+        document.getElementById('tsScore').textContent = diff + ' / 100';
+        document.getElementById('tsAvgRating').textContent = 'Avg ELO: ' + data.avg_rating;
+
+        const fill = document.getElementById('tsGaugeFill');
+        fill.style.width = diff + '%';
+
+        // Color the gauge based on difficulty
+        if (diff < 30) fill.style.background = 'var(--rg-green)';
+        else if (diff < 60) fill.style.background = 'linear-gradient(90deg, var(--rg-green), var(--rg-gold))';
+        else if (diff < 80) fill.style.background = 'linear-gradient(90deg, var(--rg-gold), var(--rg-orange))';
+        else fill.style.background = 'linear-gradient(90deg, var(--rg-orange), var(--rg-red))';
+
+        // Player cards
+        playersGrid.innerHTML = '';
+        data.players.forEach((p, idx) => {
+            const card = document.createElement('div');
+            card.className = 'ts-player-card' + (p.known ? '' : ' ts-player-card--unknown');
+
+            if (p.known) {
+                card.innerHTML =
+                    '<div class="ts-player-card__header">' +
+                        '<a href="/player/' + encodeURIComponent(p.name) + '" class="ts-player-card__name player-link">' +
+                            escapeHtml(p.name) +
+                        '</a>' +
+                        '<span class="ts-player-card__rating">' + p.rating + '</span>' +
+                    '</div>' +
+                    '<div class="ts-player-card__meta">' +
+                        'Rank #' + p.rank + ' &middot; ' + p.tournaments_played + ' cashes &middot; ' +
+                        p.wins + ' wins &middot; $' + p.total_winnings.toLocaleString('en-US', {maximumFractionDigits:0}) +
+                    '</div>' +
+                    '<button class="ts-player-card__toggle" data-idx="' + idx + '">Show Details &#9662;</button>' +
+                    '<div class="ts-player-card__details" data-idx="' + idx + '" style="display:none;">' +
+                        '<div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-bottom:.75rem;">' +
+                            '<div class="stat-card stat-card--red" style="padding:.75rem .5rem;">' +
+                                '<div class="stat-card__number" style="font-size:1.2rem;">' + p.rating + '</div>' +
+                                '<div class="stat-card__label">Poker ELO</div>' +
+                            '</div>' +
+                            '<div class="stat-card stat-card--gold" style="padding:.75rem .5rem;">' +
+                                '<div class="stat-card__number" style="font-size:1.2rem;">' + p.tournaments_played + '</div>' +
+                                '<div class="stat-card__label">Cashes</div>' +
+                            '</div>' +
+                            '<div class="stat-card stat-card--blue" style="padding:.75rem .5rem;">' +
+                                '<div class="stat-card__number" style="font-size:1.2rem;">' + p.wins + '</div>' +
+                                '<div class="stat-card__label">Wins</div>' +
+                            '</div>' +
+                            '<div class="stat-card stat-card--green" style="padding:.75rem .5rem;">' +
+                                '<div class="stat-card__number" style="font-size:1.1rem;">$' + p.total_winnings.toLocaleString('en-US', {maximumFractionDigits:0}) + '</div>' +
+                                '<div class="stat-card__label">Winnings</div>' +
+                            '</div>' +
+                            '<div class="stat-card stat-card--orange" style="padding:.75rem .5rem;">' +
+                                '<div class="stat-card__number" style="font-size:1.2rem;">' + p.best_finish + '</div>' +
+                                '<div class="stat-card__label">Best Finish</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="chart-card" style="padding:1rem;">' +
+                            '<div class="chart-card__title" style="font-size:.9rem;">ELO History</div>' +
+                            '<canvas id="tsChart' + idx + '" height="80"></canvas>' +
+                        '</div>' +
+                    '</div>';
+            } else {
+                card.innerHTML =
+                    '<div class="ts-player-card__header">' +
+                        '<span class="ts-player-card__name">' + escapeHtml(p.name) + '</span>' +
+                        '<span class="ts-player-card__rating ts-player-card__rating--unknown">Unknown</span>' +
+                    '</div>' +
+                    '<div class="ts-player-card__meta">Not in database &middot; Rated at median ELO (' + p.rating + ')</div>';
+            }
+
+            playersGrid.appendChild(card);
+
+            // Toggle expand handler
+            if (p.known) {
+                const toggleBtn = card.querySelector('.ts-player-card__toggle');
+                const detailsDiv = card.querySelector('.ts-player-card__details');
+                let chartRendered = false;
+
+                toggleBtn.addEventListener('click', function() {
+                    const isOpen = detailsDiv.style.display !== 'none';
+                    detailsDiv.style.display = isOpen ? 'none' : 'block';
+                    toggleBtn.innerHTML = isOpen ? 'Show Details &#9662;' : 'Hide Details &#9652;';
+
+                    if (!isOpen && !chartRendered && p.history && p.history.length > 1) {
+                        chartRendered = true;
+                        renderMiniChart('tsChart' + idx, p.history);
+                    }
+                });
+            }
+        });
+
+        // Scroll to results
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderMiniChart(canvasId, history) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const labels = history.map(h => {
+            try {
+                const m = h.date.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                if (m) return new Date(+m[3], +m[1]-1, +m[2]).toLocaleDateString('en-US', {month:'short', year:'2-digit'});
+                return new Date(h.date).toLocaleDateString('en-US', {month:'short', year:'2-digit'});
+            } catch(e) { return h.date; }
+        });
+        const values = history.map(h => h.conservative * 100);
+
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    borderColor: '#4ea8de',
+                    backgroundColor: 'rgba(78,168,222,.1)',
+                    borderWidth: 2,
+                    pointRadius: 1.5,
+                    pointHoverRadius: 4,
+                    tension: 0.3,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#171730',
+                        borderColor: '#2a2a4a',
+                        borderWidth: 1,
+                        titleFont: { family: "'Barlow Semi Condensed', sans-serif", weight: '700' },
+                        bodyFont: { family: "'Inter', sans-serif" },
+                        padding: 10,
+                    },
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#6b6b8a', maxTicksLimit: 10, font: { size: 10 } },
+                        grid: { color: '#2a2a4a' },
+                    },
+                    y: {
+                        ticks: { color: '#6b6b8a', font: { size: 10 } },
+                        grid: { color: '#2a2a4a' },
+                    },
+                },
+            },
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+})();
+</script>
+{% endblock %}

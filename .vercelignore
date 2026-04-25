@@ -1,0 +1,23 @@
+# Scraper & pipeline (not needed for web app)
+scraper.py
+names.py
+rating.py
+test_scraper.py
+
+# Raw scraped HTML files (454 MB)
+data/raw/
+
+# Pipeline data files (only ratings.json needed)
+data/name_matches.json
+data/name_overrides.json
+data/result_corrections.json
+data/tournaments_resolved.json
+data/tournaments.json
+
+# Dev artifacts
+__pycache__/
+.venv/
+*.pyc
+
+# Full requirements (web app uses requirements.txt)
+requirements-full.txt

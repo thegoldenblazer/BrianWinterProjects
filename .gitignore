@@ -1,0 +1,6 @@
+.vercel
+.venv/
+__pycache__/
+data/browser_profile/
+data/hendon_debug/
+

@@ -1,0 +1,8 @@
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=5.0
+thefuzz[speedup]>=0.20
+trueskill>=0.4.5
+flask>=3.0
+tqdm>=4.66
+playwright>=1.44   # local-only: powers hendon_scraper.py (not used by Vercel)

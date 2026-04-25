@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}Media Helper — Brian Winter Projects{% endblock %}
+{% block nav_cash_sort %}active{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+
+    <h1 class="fw-heading text-gold mb-2" style="font-size:1.6rem;">
+        <span style="margin-right:.35rem;">&#128176;</span> Media Helper
+    </h1>
+    <p class="text-secondary mb-3" style="font-size:.85rem;">
+        Upload a GES PMS Past Entries / placings CSV. Players are reordered by their
+        career <strong>Total Live Earnings</strong> from
+        <a href="https://pokerdb.thehendonmob.com/" target="_blank" rel="noopener">The Hendon Mob</a>.
+    </p>
+
+    <!-- Upload card -->
+    <div class="ts-difficulty-card mb-3" style="padding:1.25rem;">
+        <form id="cashSortForm">
+            <label for="csvFile" style="display:block; font-weight:600; margin-bottom:.5rem;">
+                Tournament Entries CSV
+            </label>
+            <input type="file" id="csvFile" name="file" accept=".csv,text/csv" required
+                   style="color:var(--text-primary); margin-bottom:.75rem;">
+            <div style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;">
+                <button type="submit" class="filter-btn filter-btn--primary" id="sortBtn">
+                    Sort by Cashes
+                </button>
+                <button type="button" class="filter-btn filter-btn--ghost" id="resetBtn"
+                        style="display:none;">Clear</button>
+                <span class="text-secondary" id="statusText" style="font-size:.8rem;"></span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div id="csResults" style="display:none;">
+        <!-- Summary -->
+        <div class="stat-grid mb-3">
+            <div class="stat-card stat-card--green">
+                <div class="stat-card__icon">&#9829;</div>
+                <div class="stat-card__number" id="csRankedCount">0</div>
+                <div class="stat-card__label">Ranked</div>
+            </div>
+            <div class="stat-card stat-card--gold">
+                <div class="stat-card__icon">&#9824;</div>
+                <div class="stat-card__number" id="csTotalEntrants">0</div>
+                <div class="stat-card__label">Total Entrants</div>
+            </div>
+            <div class="stat-card stat-card--red">
+                <div class="stat-card__icon">&#9888;</div>
+                <div class="stat-card__number" id="csMissingCount">0</div>
+                <div class="stat-card__label">Not in Cache</div>
+            </div>
+            <div class="stat-card stat-card--blue">
+                <div class="stat-card__icon">&#36;</div>
+                <div class="stat-card__number" id="csTopEarnings">$0</div>
+                <div class="stat-card__label">Top Earnings</div>
+            </div>
+        </div>
+
+        <!-- Ranked table -->
+        <div class="rg-table-wrap">
+            <table class="rg-table">
+                <thead>
+                    <tr>
+                        <th class="col-rank">#</th>
+                        <th>Player</th>
+                        <th>Hendon Match</th>
+                        <th>Cashes</th>
+                        <th>Total Live Earnings</th>
+                    </tr>
+                </thead>
+                <tbody id="csRankedBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Missing players -->
+        <div id="csMissingPanel" style="display:none; margin-top:1.5rem;">
+            <h3 class="fw-heading text-gold" style="font-size:1.15rem;">Not yet in cache</h3>
+            <p class="text-secondary" style="font-size:.8rem;">
+                These players haven't been scraped from Hendon Mob yet. Run the local
+                scraper to add them, then re-upload:
+                <code style="color:var(--rg-gold);">python hendon_scraper.py --csv "your_file.csv"</code>
+            </p>
+            <div style="margin-bottom:.5rem;">
+                <button class="filter-btn filter-btn--ghost" id="copyMissingBtn">
+                    Copy names to clipboard
+                </button>
+            </div>
+            <ul id="csMissingList" style="columns:2; font-size:.85rem; color:var(--text-secondary);"></ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    const form = document.getElementById('cashSortForm');
+    const fileInput = document.getElementById('csvFile');
+    const sortBtn = document.getElementById('sortBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusText = document.getElementById('statusText');
+    const resultsDiv = document.getElementById('csResults');
+
+    const fmtMoney = (n) => {
+        if (n == null) return '—';
+        return '$' + Number(n).toLocaleString('en-US');
+    };
+    const escape = (s) => String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!fileInput.files.length) return;
+
+        const fd = new FormData();
+        fd.append('file', fileInput.files[0]);
+
+        sortBtn.disabled = true;
+        sortBtn.textContent = 'Sorting...';
+        statusText.textContent = 'Reading CSV and matching against Hendon Mob cache...';
+
+        fetch('/api/cash-sort', { method: 'POST', body: fd })
+            .then(r => r.json().then(d => ({ ok: r.ok, data: d })))
+            .then(({ ok, data }) => {
+                if (!ok) {
+                    statusText.textContent = '';
+                    alert(data.error || 'Sort failed.');
+                    return;
+                }
+                renderResults(data);
+            })
+            .catch(err => {
+                statusText.textContent = '';
+                alert('Error: ' + err);
+            })
+            .finally(() => {
+                sortBtn.disabled = false;
+                sortBtn.textContent = 'Sort by Cashes';
+                resetBtn.style.display = '';
+            });
+    });
+
+    resetBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        resultsDiv.style.display = 'none';
+        statusText.textContent = '';
+        resetBtn.style.display = 'none';
+    });
+
+    function renderResults(data) {
+        document.getElementById('csTotalEntrants').textContent = data.total_entrants;
+        document.getElementById('csRankedCount').textContent = data.ranked_count;
+        document.getElementById('csMissingCount').textContent = data.missing_count;
+        document.getElementById('csTopEarnings').textContent =
+            data.ranked.length ? fmtMoney(data.ranked[0].total_earnings) : '—';
+
+        const body = document.getElementById('csRankedBody');
+        body.innerHTML = data.ranked.map(p => {
+            const display = `${escape(p.first)} ${escape(p.last)}`;
+            const matched = p.profile_url
+                ? `<a href="${escape(p.profile_url)}" target="_blank" rel="noopener">${escape(p.matched_name)}</a>`
+                : escape(p.matched_name);
+            const rowClass = p.rank === 1 ? 'row-gold' :
+                             p.rank === 2 ? 'row-silver' :
+                             p.rank === 3 ? 'row-bronze' : '';
+            return `<tr class="${rowClass}">
+                <td class="col-rank">${p.rank}</td>
+                <td><strong>${display}</strong></td>
+                <td>${matched}</td>
+                <td>${p.cashes != null ? p.cashes : '—'}</td>
+                <td><strong>${fmtMoney(p.total_earnings)}</strong></td>
+            </tr>`;
+        }).join('') || `<tr><td colspan="5" class="text-secondary" style="text-align:center;">
+            No players matched. Run the scraper to populate the cache.</td></tr>`;
+
+        const missingPanel = document.getElementById('csMissingPanel');
+        const missingList = document.getElementById('csMissingList');
+        if (data.missing.length) {
+            missingPanel.style.display = '';
+            missingList.innerHTML = data.missing.map(p =>
+                `<li>${escape(p.first)} ${escape(p.last)}${p.in_cache ? ' <small>(no earnings)</small>' : ''}</li>`
+            ).join('');
+        } else {
+            missingPanel.style.display = 'none';
+        }
+
+        document.getElementById('copyMissingBtn').onclick = () => {
+            const text = data.missing.map(p => `${p.first} ${p.last}`).join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                statusText.textContent = `Copied ${data.missing.length} names.`;
+                setTimeout(() => { statusText.textContent = ''; }, 2500);
+            });
+        };
+
+        statusText.textContent = `Matched ${data.ranked_count} of ${data.total_entrants} entrants.`;
+        resultsDiv.style.display = '';
+    }
+})();
+</script>
+{% endblock %}

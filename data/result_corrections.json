@@ -1,0 +1,11 @@
+[
+    {
+        "comment": "Website error: blog title says Greg Robinson wins but table shows Charles Mayes in 1st. Charles Mayes did not place.",
+        "match": {
+            "name_contains": "Greg Robinson wins Event #6",
+            "date": "Apr 30, 2025"
+        },
+        "remove_player": "Charles Mayes",
+        "set_first_place": "Greg Robinson"
+    }
+]

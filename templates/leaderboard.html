@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}RunGood ELO — Brian Winter Projects{% endblock %}
+{% block nav_leaderboard %}active{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+
+    <!-- Stat cards -->
+    <div class="stat-grid mb-3">
+        <div class="stat-card stat-card--red">
+            <div class="stat-card__icon">♠</div>
+            <div class="stat-card__number">{{ total_players }}</div>
+            <div class="stat-card__label">Ranked Players</div>
+        </div>
+        <div class="stat-card stat-card--gold">
+            <div class="stat-card__icon">♦</div>
+            <div class="stat-card__number">{{ total_tournaments }}</div>
+            <div class="stat-card__label">Tournaments</div>
+        </div>
+        <div class="stat-card stat-card--blue">
+            <div class="stat-card__icon">♣</div>
+            <div class="stat-card__number">{{ top_rating }}</div>
+            <div class="stat-card__label">Top Poker ELO</div>
+        </div>
+        <div class="stat-card stat-card--green">
+            <div class="stat-card__icon">♥</div>
+            <div class="stat-card__number">${{ "{:,.0f}".format(total_winnings) }}</div>
+            <div class="stat-card__label">Total Winnings</div>
+        </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar mb-3">
+        <span class="filter-bar__label">Cashes</span>
+        <div class="filter-pills">
+            {% for n in [1, 2, 3, 5, 8, 10, 15, 20] %}
+            <a href="?min_events={{ n }}&sort={{ sort_by }}&order={{ order }}&q={{ search }}"
+               class="filter-pill {{ 'active' if n == min_events }}">{{ n }}+</a>
+            {% endfor %}
+        </div>
+
+        <form method="get" class="d-flex align-items-center gap-2 ms-auto" style="gap:.5rem">
+            <input type="hidden" name="min_events" value="{{ min_events }}">
+            <input type="hidden" name="sort" value="{{ sort_by }}">
+            <input type="hidden" name="order" value="{{ order }}">
+            <input type="text" name="q" value="{{ search }}" class="filter-search"
+                   placeholder="Filter by name...">
+            <button type="submit" class="filter-btn filter-btn--primary">Go</button>
+            {% if search or min_events != 3 %}
+            <a href="/" class="filter-btn filter-btn--ghost">Reset</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Active filters -->
+    {% if search or min_events != 3 %}
+    <div class="active-filters mb-2">
+        {% if min_events != 3 %}
+        <span class="active-filter-tag">Cashes: {{ min_events }}+</span>
+        {% endif %}
+        {% if search %}
+        <span class="active-filter-tag">Search: "{{ search }}"</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Leaderboard table -->
+    <div class="rg-table-wrap">
+        <table class="rg-table">
+            <thead>
+                <tr>
+                    <th class="col-rank">#</th>
+                    <th>
+                        {% set s = 'player' %}
+                        <a href="?sort={{ s }}&order={{ 'desc' if sort_by != s or order == 'asc' else 'asc' }}&min_events={{ min_events }}&q={{ search }}"
+                           class="sort-link {{ 'active' if sort_by == s }}">
+                            Player
+                            <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
+                        </a>
+                    </th>
+                    <th>
+                        {% set s = 'conservative_rating' %}
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                           class="sort-link {{ 'active' if sort_by == s }}">
+                            Poker ELO
+                            <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
+                        </a>
+                    </th>
+                    <th>
+                        {% set s = 'tournaments_played' %}
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                           class="sort-link {{ 'active' if sort_by == s }}">
+                            Cashes
+                            <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
+                        </a>
+                    </th>
+                    <th>
+                        {% set s = 'wins' %}
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                           class="sort-link {{ 'active' if sort_by == s }}">
+                            Wins
+                            <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
+                        </a>
+                    </th>
+                    <th>
+                        {% set s = 'total_winnings' %}
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                           class="sort-link {{ 'active' if sort_by == s }}">
+                            Winnings
+                            <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
+                        </a>
+                    </th>
+                    <th>Last Active</th>
+                    <th style="width:70px">Compare</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in players %}
+                <tr class="{{ 'row-gold' if p.display_rank == 1 }}{{ 'row-silver' if p.display_rank == 2 }}{{ 'row-bronze' if p.display_rank == 3 }}">
+                    <td class="col-rank">{{ p.display_rank }}</td>
+                    <td>
+                        <a href="/player/{{ p.player | urlencode }}" class="player-link">{{ p.player }}</a>
+                    </td>
+                    <td class="rating-cell">
+                        <span class="rating-val">{{ p.conservative_rating | elo }}</span>
+                        <span class="rating-bar-bg">
+                            <span class="rating-bar-fill" style="width: {{ [0, [100, ((p.conservative_rating * 100 + 1000) / (max_rating + 1000) * 100)] | min] | max }}%;"></span>
+                        </span>
+                    </td>
+                    <td>{{ p.tournaments_played }}</td>
+                    <td>{{ p.wins }}</td>
+                    <td class="col-money">${{ "{:,.0f}".format(p.total_winnings) }}</td>
+                    <td class="col-date">{{ p.last_active | fmtdate }}</td>
+                    <td>
+                        <input type="checkbox" class="compare-check" value="{{ p.player }}" title="Add to comparison">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="rg-pagination">
+        <span class="rg-pagination__info">
+            Showing {{ (page - 1) * 50 + 1 }}–{{ [page * 50, total_players] | min }} of {{ total_players }}
+        </span>
+
+        <a class="pg-btn {{ 'disabled' if page <= 1 }}"
+           href="?page={{ page - 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">‹ Prev</a>
+
+        {% for p_num in range(1, total_pages + 1) %}
+            {% if p_num == 1 or p_num == total_pages or (p_num >= page - 2 and p_num <= page + 2) %}
+        <a class="pg-btn {{ 'active' if p_num == page }}"
+           href="?page={{ p_num }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">{{ p_num }}</a>
+            {% elif p_num == page - 3 or p_num == page + 3 %}
+        <span class="pg-ellipsis">…</span>
+            {% endif %}
+        {% endfor %}
+
+        <a class="pg-btn {{ 'disabled' if page >= total_pages }}"
+           href="?page={{ page + 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">Next ›</a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Compare bar (fixed bottom) -->
+<div class="compare-bar" id="compareBar">
+    <span class="compare-bar__text"><span id="compareCount">0</span> players selected</span>
+    <button class="compare-bar__btn" id="compareGo">Compare ➜</button>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<p>Generated: {{ generated_at[:10] }} · Poker ELO = (μ − 3σ) × 100</p>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // --- Compare checkbox logic ---
+    const checks = document.querySelectorAll('.compare-check');
+    const compareBar = document.getElementById('compareBar');
+    const compareCount = document.getElementById('compareCount');
+    const compareGo = document.getElementById('compareGo');
+
+    function updateCompareBar() {
+        const selected = [...checks].filter(c => c.checked).map(c => c.value);
+        compareCount.textContent = selected.length;
+        compareBar.classList.toggle('show', selected.length >= 2);
+    }
+
+    checks.forEach(c => c.addEventListener('change', function () {
+        const selected = [...checks].filter(c => c.checked);
+        if (selected.length > 4) { this.checked = false; }
+        updateCompareBar();
+    }));
+
+    compareGo.addEventListener('click', () => {
+        const selected = [...checks].filter(c => c.checked).map(c => c.value);
+        if (selected.length >= 2) {
+            const params = selected.map(n => 'players=' + encodeURIComponent(n)).join('&');
+            window.location.href = '/compare?' + params;
+        }
+    });
+</script>
+{% endblock %}
