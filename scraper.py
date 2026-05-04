@@ -51,10 +51,14 @@ def cache_path(url: str) -> Path:
     return RAW_DIR / f"{url_hash}.html"
 
 
-def fetch(url: str) -> str:
-    """Fetch a URL with caching and rate limiting."""
+def fetch(url: str, *, force: bool = False) -> str:
+    """Fetch a URL with caching and rate limiting.
+
+    If ``force`` is True the cache is bypassed and overwritten with a fresh fetch.
+    Used for index pages, which change as new posts are added.
+    """
     cached = cache_path(url)
-    if cached.exists():
+    if cached.exists() and not force:
         return cached.read_text(encoding="utf-8")
 
     time.sleep(DELAY)
@@ -66,26 +70,43 @@ def fetch(url: str) -> str:
 
 
 def get_tournament_urls() -> list[str]:
-    """Crawl all index pages and extract tournament blog post URLs."""
-    urls = []
-    for page_num in tqdm(range(1, 77), desc="Crawling index pages"):
-        if page_num == 1:
-            page_url = BASE_URL
-        else:
-            page_url = f"{BASE_URL}?page={page_num}"
+    """Crawl all index pages and extract tournament blog post URLs.
 
-        html = fetch(page_url)
+    Walks pages starting at 1 and stops when a page yields no new article
+    links (i.e. we've gone past the last real page). Index pages are always
+    re-fetched fresh so newly published tournaments are picked up.
+    """
+    urls = []
+    page_num = 0
+    pbar = tqdm(desc="Crawling index pages")
+    while True:
+        page_num += 1
+        page_url = BASE_URL if page_num == 1 else f"{BASE_URL}?page={page_num}"
+        pbar.update(1)
+
+        html = fetch(page_url, force=True)
         soup = BeautifulSoup(html, "lxml")
 
-        # Find all article links - they're in h2 tags within the blog listing
-        for link in soup.select("h2 a[href*='/blogs/news-1/']"):
+        page_links = soup.select("h2 a[href*='/blogs/news-1/']")
+        if not page_links:
+            break
+
+        added_this_page = 0
+        for link in page_links:
             href = link.get("href", "")
             if href:
                 full_url = urljoin("https://www.rungood.com", href)
                 if full_url not in urls:
                     urls.append(full_url)
+                    added_this_page += 1
 
-    print(f"Found {len(urls)} tournament URLs")
+        # All links on this page were already collected from earlier pages —
+        # treat as end of pagination to avoid an infinite loop on a misbehaving site.
+        if added_this_page == 0:
+            break
+
+    pbar.close()
+    print(f"Found {len(urls)} tournament URLs across {page_num} index page(s)")
     return urls
 
 
