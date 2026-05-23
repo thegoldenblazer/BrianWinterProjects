@@ -31,10 +31,18 @@
 
     <!-- Filter bar -->
     <div class="filter-bar mb-3">
+        <span class="filter-bar__label">Timeframe</span>
+        <div class="filter-pills">
+            <a href="?timeframe=all&min_events={{ min_events }}&sort={{ sort_by }}&order={{ order }}&q={{ search }}"
+               class="filter-pill {{ 'active' if timeframe == 'all' }}">All Time</a>
+            <a href="?timeframe=12m&min_events={{ min_events }}&sort={{ sort_by }}&order={{ order }}&q={{ search }}"
+               class="filter-pill {{ 'active' if timeframe == '12m' }}">Last 12 Months</a>
+        </div>
+
         <span class="filter-bar__label">Cashes</span>
         <div class="filter-pills">
             {% for n in [1, 2, 3, 5, 8, 10, 15, 20] %}
-            <a href="?min_events={{ n }}&sort={{ sort_by }}&order={{ order }}&q={{ search }}"
+            <a href="?min_events={{ n }}&sort={{ sort_by }}&order={{ order }}&q={{ search }}&timeframe={{ timeframe }}"
                class="filter-pill {{ 'active' if n == min_events }}">{{ n }}+</a>
             {% endfor %}
         </div>
@@ -43,18 +51,22 @@
             <input type="hidden" name="min_events" value="{{ min_events }}">
             <input type="hidden" name="sort" value="{{ sort_by }}">
             <input type="hidden" name="order" value="{{ order }}">
+            <input type="hidden" name="timeframe" value="{{ timeframe }}">
             <input type="text" name="q" value="{{ search }}" class="filter-search"
                    placeholder="Filter by name...">
             <button type="submit" class="filter-btn filter-btn--primary">Go</button>
-            {% if search or min_events != 3 %}
-            <a href="/" class="filter-btn filter-btn--ghost">Reset</a>
+            {% if search or min_events != 3 or timeframe != 'all' %}
+            <a href="/leaderboard" class="filter-btn filter-btn--ghost">Reset</a>
             {% endif %}
         </form>
     </div>
 
     <!-- Active filters -->
-    {% if search or min_events != 3 %}
+    {% if search or min_events != 3 or timeframe != 'all' %}
     <div class="active-filters mb-2">
+        {% if timeframe == '12m' %}
+        <span class="active-filter-tag">Timeframe: Last 12 Months</span>
+        {% endif %}
         {% if min_events != 3 %}
         <span class="active-filter-tag">Cashes: {{ min_events }}+</span>
         {% endif %}
@@ -72,7 +84,7 @@
                     <th class="col-rank">#</th>
                     <th>
                         {% set s = 'player' %}
-                        <a href="?sort={{ s }}&order={{ 'desc' if sort_by != s or order == 'asc' else 'asc' }}&min_events={{ min_events }}&q={{ search }}"
+                        <a href="?sort={{ s }}&order={{ 'desc' if sort_by != s or order == 'asc' else 'asc' }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}"
                            class="sort-link {{ 'active' if sort_by == s }}">
                             Player
                             <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
@@ -80,7 +92,7 @@
                     </th>
                     <th>
                         {% set s = 'conservative_rating' %}
-                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}"
                            class="sort-link {{ 'active' if sort_by == s }}">
                             Poker ELO
                             <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
@@ -88,7 +100,7 @@
                     </th>
                     <th>
                         {% set s = 'tournaments_played' %}
-                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}"
                            class="sort-link {{ 'active' if sort_by == s }}">
                             Cashes
                             <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
@@ -96,7 +108,7 @@
                     </th>
                     <th>
                         {% set s = 'wins' %}
-                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}"
                            class="sort-link {{ 'active' if sort_by == s }}">
                             Wins
                             <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
@@ -104,7 +116,7 @@
                     </th>
                     <th>
                         {% set s = 'total_winnings' %}
-                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}"
+                        <a href="?sort={{ s }}&order={{ 'asc' if sort_by == s and order == 'desc' else 'desc' }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}"
                            class="sort-link {{ 'active' if sort_by == s }}">
                             Winnings
                             <span class="sort-arrow">{{ '▲' if sort_by == s and order == 'asc' else '▼' }}</span>
@@ -148,19 +160,19 @@
         </span>
 
         <a class="pg-btn {{ 'disabled' if page <= 1 }}"
-           href="?page={{ page - 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">‹ Prev</a>
+           href="?page={{ page - 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}">‹ Prev</a>
 
         {% for p_num in range(1, total_pages + 1) %}
             {% if p_num == 1 or p_num == total_pages or (p_num >= page - 2 and p_num <= page + 2) %}
         <a class="pg-btn {{ 'active' if p_num == page }}"
-           href="?page={{ p_num }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">{{ p_num }}</a>
+           href="?page={{ p_num }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}">{{ p_num }}</a>
             {% elif p_num == page - 3 or p_num == page + 3 %}
         <span class="pg-ellipsis">…</span>
             {% endif %}
         {% endfor %}
 
         <a class="pg-btn {{ 'disabled' if page >= total_pages }}"
-           href="?page={{ page + 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}">Next ›</a>
+           href="?page={{ page + 1 }}&sort={{ sort_by }}&order={{ order }}&min_events={{ min_events }}&q={{ search }}&timeframe={{ timeframe }}">Next ›</a>
     </div>
     {% endif %}
 

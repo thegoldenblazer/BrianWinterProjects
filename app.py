@@ -11,6 +11,7 @@ import os
 import re
 import statistics
 import unicodedata
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -81,10 +82,42 @@ def leaderboard():
     sort_by = request.args.get("sort", "conservative_rating")
     order = request.args.get("order", "desc")
     search = request.args.get("q", "").strip().lower()
+    timeframe = request.args.get("timeframe", "all")
+    if timeframe not in ("all", "12m"):
+        timeframe = "all"
     page = request.args.get("page", 1, type=int)
     per_page = 50
 
     players = data["players"]
+
+    # Timeframe filter: recompute stats from in-window history entries.
+    if timeframe == "12m":
+        cutoff = datetime.now() - timedelta(days=365)
+        filtered = []
+        for p in players:
+            in_window = []
+            for h in p.get("history", []):
+                try:
+                    d = datetime.strptime(h.get("date", "").strip(),
+                                          "%b %d, %Y")
+                except (ValueError, AttributeError):
+                    continue
+                if d >= cutoff:
+                    in_window.append((d, h))
+            if not in_window:
+                continue
+            in_window.sort(key=lambda x: x[0])
+            last_entry = in_window[-1][1]
+            p2 = dict(p)
+            p2["tournaments_played"] = len(in_window)
+            p2["wins"] = sum(1 for _, h in in_window if h.get("place") == 1)
+            p2["total_winnings"] = round(
+                sum(h.get("prize", 0) or 0 for _, h in in_window), 2
+            )
+            p2["best_finish"] = min(h.get("place", 999) for _, h in in_window)
+            p2["last_active"] = last_entry.get("date", p.get("last_active", ""))
+            filtered.append(p2)
+        players = filtered
 
     # Filter by minimum events
     players = [p for p in players if p["tournaments_played"] >= min_events]
@@ -135,6 +168,7 @@ def leaderboard():
         sort_by=sort_by,
         order=order,
         search=search,
+        timeframe=timeframe,
         page=page,
         total_pages=total_pages,
     )
