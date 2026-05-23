@@ -392,7 +392,7 @@
     ],
     "counts": {
       "Andrew Moreno": 2,
-      "Andrew Mowen": 6
+      "Andrew Mowen": 5
     }
   },
   {
@@ -1008,6 +1008,16 @@
     }
   },
   {
+    "canonical": "Brendan Waite",
+    "variants": [
+      "Brendan Watte"
+    ],
+    "counts": {
+      "Brendan Waite": 1,
+      "Brendan Watte": 1
+    }
+  },
+  {
     "canonical": "Brent Wheeler",
     "variants": [
       "Brent J Wheeler"
@@ -1033,7 +1043,7 @@
       "Brina Frenzel"
     ],
     "counts": {
-      "Brian Frenzel": 62,
+      "Brian Frenzel": 53,
       "Brina Frenzel": 1
     }
   },
@@ -1203,7 +1213,7 @@
       "Bryce Laymence"
     ],
     "counts": {
-      "Bryce Laymance": 3,
+      "Bryce Laymance": 2,
       "Bryce Laymence": 2
     }
   },
@@ -1237,7 +1247,7 @@
       "Catlin Comeskey"
     ],
     "counts": {
-      "Caitlin Comeskey": 19,
+      "Caitlin Comeskey": 18,
       "Caitlin Comesky": 2,
       "Caitlin Cosmeskey": 1,
       "Catlin Comeskey": 1
@@ -1279,7 +1289,7 @@
       "Carson Williams"
     ],
     "counts": {
-      "Carson Williams": 2,
+      "Carson Williams": 1,
       "Jason Williams": 3
     }
   },
@@ -1345,16 +1355,6 @@
     "counts": {
       "Chad Beatty": 1,
       "Chadd Beatty": 8
-    }
-  },
-  {
-    "canonical": "Chad Lewis",
-    "variants": [
-      "Chay Lewis"
-    ],
-    "counts": {
-      "Chad Lewis": 1,
-      "Chay Lewis": 1
     }
   },
   {
@@ -1556,7 +1556,7 @@
     ],
     "counts": {
       "Chris Williams": 1,
-      "Chris Willis": 5
+      "Chris Willis": 4
     }
   },
   {
@@ -1669,7 +1669,7 @@
       "Chtistopher Belcher"
     ],
     "counts": {
-      "Christopher Belcher": 21,
+      "Christopher Belcher": 20,
       "Chtistopher Belcher": 1
     }
   },
@@ -1708,16 +1708,6 @@
     }
   },
   {
-    "canonical": "Christopher Marcus",
-    "variants": [
-      "Christopher Caruso"
-    ],
-    "counts": {
-      "Christopher Caruso": 1,
-      "Christopher Marcus": 6
-    }
-  },
-  {
     "canonical": "Christopher Christian",
     "variants": [
       "Christopher Chahrestan",
@@ -1742,22 +1732,12 @@
     }
   },
   {
-    "canonical": "Christopher Rofles",
-    "variants": [
-      "Christopher Coles"
-    ],
-    "counts": {
-      "Christopher Coles": 1,
-      "Christopher Rofles": 1
-    }
-  },
-  {
     "canonical": "Christopher Conrad",
     "variants": [
       "Christopher Ford"
     ],
     "counts": {
-      "Christopher Conrad": 9,
+      "Christopher Conrad": 8,
       "Christopher Ford": 1
     }
   },
@@ -1799,7 +1779,7 @@
       "Christpher Francia"
     ],
     "counts": {
-      "Christopher Francia": 5,
+      "Christopher Francia": 4,
       "Christpher Francia": 1
     }
   },
@@ -1832,7 +1812,7 @@
     "counts": {
       "Christopher Lange": 1,
       "Christopher Linger": 1,
-      "Christopher Long": 3
+      "Christopher Long": 2
     }
   },
   {
@@ -1842,7 +1822,7 @@
     ],
     "counts": {
       "Christopher Livesay": 2,
-      "Christpher Livesay": 2
+      "Christpher Livesay": 1
     }
   },
   {
@@ -2060,7 +2040,7 @@
     ],
     "counts": {
       "Courtney Scott": 1,
-      "Courtney Stott": 7
+      "Courtney Stott": 6
     }
   },
   {
@@ -2134,16 +2114,6 @@
     }
   },
   {
-    "canonical": "Dakota Yeutter",
-    "variants": [
-      "Lakota Yeutter"
-    ],
-    "counts": {
-      "Dakota Yeutter": 1,
-      "Lakota Yeutter": 1
-    }
-  },
-  {
     "canonical": "Dale Schuman",
     "variants": [
       "Sale Schuman"
@@ -2184,13 +2154,13 @@
     }
   },
   {
-    "canonical": "Daniel Connors",
+    "canonical": "Daniel Conners",
     "variants": [
-      "Daniel Conners"
+      "Daniel Connors"
     ],
     "counts": {
       "Daniel Conners": 1,
-      "Daniel Connors": 2
+      "Daniel Connors": 1
     }
   },
   {
@@ -2201,16 +2171,6 @@
     "counts": {
       "Daniel Davies": 2,
       "Daniel Dies": 1
-    }
-  },
-  {
-    "canonical": "Daniel Diederich",
-    "variants": [
-      "Daniel Diedrich"
-    ],
-    "counts": {
-      "Daniel Diederich": 1,
-      "Daniel Diedrich": 1
     }
   },
   {
@@ -2346,15 +2306,15 @@
     }
   },
   {
-    "canonical": "Daniel Moskowitz",
+    "canonical": "Daniel Maskowitz",
     "variants": [
-      "Daniel Maskowitz",
-      "Daniel Moskowit"
+      "Daniel Moskowit",
+      "Daniel Moskowitz"
     ],
     "counts": {
       "Daniel Maskowitz": 1,
       "Daniel Moskowit": 1,
-      "Daniel Moskowitz": 2
+      "Daniel Moskowitz": 1
     }
   },
   {
@@ -2465,7 +2425,7 @@
       "Daryl Oppett"
     ],
     "counts": {
-      "Daryl Oppelt": 13,
+      "Daryl Oppelt": 10,
       "Daryl Oppett": 1
     }
   },
@@ -2640,17 +2600,7 @@
     ],
     "counts": {
       "David Pavahouse": 1,
-      "David Pevahouse": 9
-    }
-  },
-  {
-    "canonical": "David Rose",
-    "variants": [
-      "David Roisen"
-    ],
-    "counts": {
-      "David Roisen": 1,
-      "David Rose": 5
+      "David Pevahouse": 8
     }
   },
   {
@@ -2709,7 +2659,7 @@
       "Dee Oaks"
     ],
     "counts": {
-      "Dee Oakes": 2,
+      "Dee Oakes": 1,
       "Dee Oaks": 1
     }
   },
@@ -2780,7 +2730,7 @@
     ],
     "counts": {
       "Dimas Martinez": 4,
-      "Dimas Martinez Jr": 3
+      "Dimas Martinez Jr": 2
     }
   },
   {
@@ -2916,16 +2866,6 @@
     }
   },
   {
-    "canonical": "Douglas Speir",
-    "variants": [
-      "Douglas Weir"
-    ],
-    "counts": {
-      "Douglas Speir": 1,
-      "Douglas Weir": 1
-    }
-  },
-  {
     "canonical": "Duane Gerleman",
     "variants": [
       "Duan Gerleman",
@@ -2933,7 +2873,7 @@
     ],
     "counts": {
       "Duan Gerleman": 1,
-      "Duane Gerleman": 14,
+      "Duane Gerleman": 12,
       "Duane Gerleman*": 1
     }
   },
@@ -3078,7 +3018,7 @@
     ],
     "counts": {
       "Elden Penn": 1,
-      "Eldon Penn": 16
+      "Eldon Penn": 14
     }
   },
   {
@@ -3168,7 +3108,7 @@
     ],
     "counts": {
       "Eric Polsen": 1,
-      "Eric Polson": 7
+      "Eric Polson": 5
     }
   },
   {
@@ -3587,7 +3527,7 @@
       "Gregory Raymer"
     ],
     "counts": {
-      "Greg Raymer": 21,
+      "Greg Raymer": 20,
       "Gregory Raymer": 3
     }
   },
@@ -3712,16 +3652,6 @@
     }
   },
   {
-    "canonical": "Harry Zill",
-    "variants": [
-      "Harry Zilli"
-    ],
-    "counts": {
-      "Harry Zill": 2,
-      "Harry Zilli": 1
-    }
-  },
-  {
     "canonical": "Hassan Dashtaei",
     "variants": [
       "Hasan Dashtaei",
@@ -3764,16 +3694,6 @@
     }
   },
   {
-    "canonical": "Henry Hill",
-    "variants": [
-      "Henry Hull"
-    ],
-    "counts": {
-      "Henry Hill": 1,
-      "Henry Hull": 1
-    }
-  },
-  {
     "canonical": "Henry Pham",
     "variants": [
       "Henry Phan"
@@ -3781,16 +3701,6 @@
     "counts": {
       "Henry Pham": 1,
       "Henry Phan": 1
-    }
-  },
-  {
-    "canonical": "Herbert Gartner",
-    "variants": [
-      "Herb Gartner"
-    ],
-    "counts": {
-      "Herb Gartner": 1,
-      "Herbert Gartner": 4
     }
   },
   {
@@ -3852,7 +3762,7 @@
     ],
     "counts": {
       "Iman Al-Sadan": 1,
-      "Iman Al-Saden": 9
+      "Iman Al-Saden": 8
     }
   },
   {
@@ -3861,7 +3771,7 @@
       "Isaac Kramer"
     ],
     "counts": {
-      "Isaac Cramer": 3,
+      "Isaac Cramer": 2,
       "Isaac Kramer": 1
     }
   },
@@ -4217,7 +4127,7 @@
       "James Rone"
     ],
     "counts": {
-      "James Rion": 1,
+      "James Rion": 2,
       "James Rone": 1
     }
   },
@@ -4279,6 +4189,18 @@
     "counts": {
       "James Wells": 1,
       "James Wes": 1
+    }
+  },
+  {
+    "canonical": "Jaymie Virtusio",
+    "variants": [
+      "Jamie Virtusio",
+      "Jayme Virtusio"
+    ],
+    "counts": {
+      "Jamie Virtusio": 1,
+      "Jayme Virtusio": 1,
+      "Jaymie Virtusio": 11
     }
   },
   {
@@ -4484,16 +4406,6 @@
     }
   },
   {
-    "canonical": "Jaymie Virtusio",
-    "variants": [
-      "Jayme Virtusio"
-    ],
-    "counts": {
-      "Jayme Virtusio": 1,
-      "Jaymie Virtusio": 11
-    }
-  },
-  {
     "canonical": "Jeffrey Burquist",
     "variants": [
       "Jeff Burquist"
@@ -4552,7 +4464,7 @@
     "counts": {
       "Jeff Grimes": 2,
       "Jeffery Grimes": 1,
-      "Jeffrey Grimes": 12
+      "Jeffrey Grimes": 11
     }
   },
   {
@@ -4612,15 +4524,15 @@
     }
   },
   {
-    "canonical": "Jeffrey Sudbeck",
+    "canonical": "Jeffery Sudbeck",
     "variants": [
       "Jeff Sudbeck",
-      "Jeffery Sudbeck"
+      "Jeffrey Sudbeck"
     ],
     "counts": {
       "Jeff Sudbeck": 1,
       "Jeffery Sudbeck": 1,
-      "Jeffrey Sudbeck": 2
+      "Jeffrey Sudbeck": 1
     }
   },
   {
@@ -4630,7 +4542,7 @@
     ],
     "counts": {
       "Jeff Traynor": 1,
-      "Jeffrey Traynor": 3
+      "Jeffrey Traynor": 4
     }
   },
   {
@@ -4683,16 +4595,6 @@
     "counts": {
       "Jeffery Bryan": 1,
       "Jeffrey Bryan": 7
-    }
-  },
-  {
-    "canonical": "Jeffrey Dye",
-    "variants": [
-      "Jeffery Dye"
-    ],
-    "counts": {
-      "Jeffery Dye": 1,
-      "Jeffrey Dye": 2
     }
   },
   {
@@ -4758,11 +4660,13 @@
   {
     "canonical": "Jeffrey Day",
     "variants": [
-      "Jeffrey Day*"
+      "Jeffrey Day*",
+      "Jeffrey Dye"
     ],
     "counts": {
       "Jeffrey Day": 17,
-      "Jeffrey Day*": 1
+      "Jeffrey Day*": 1,
+      "Jeffrey Dye": 2
     }
   },
   {
@@ -4851,7 +4755,7 @@
       "Jerry Yrlas Jr"
     ],
     "counts": {
-      "Jerry Jones": 5,
+      "Jerry Jones": 4,
       "Jerry Yrlas Jr": 1
     }
   },
@@ -5216,7 +5120,7 @@
     ],
     "counts": {
       "John Rose": 2,
-      "John Ross": 2
+      "John Ross": 1
     }
   },
   {
@@ -5226,7 +5130,7 @@
     ],
     "counts": {
       "John Stanfield": 1,
-      "Jon Stanfield": 28
+      "Jon Stanfield": 26
     }
   },
   {
@@ -5386,16 +5290,6 @@
     }
   },
   {
-    "canonical": "Jonathon Mason",
-    "variants": [
-      "Jonathon Lawson"
-    ],
-    "counts": {
-      "Jonathon Lawson": 1,
-      "Jonathon Mason": 4
-    }
-  },
-  {
     "canonical": "Joseph Castillo",
     "variants": [
       "Jose Castillo"
@@ -5501,7 +5395,7 @@
       "Joseph Thimes*"
     ],
     "counts": {
-      "Joseph Thimes": 6,
+      "Joseph Thimes": 4,
       "Joseph Thimes*": 1
     }
   },
@@ -5552,7 +5446,7 @@
     ],
     "counts": {
       "Josh Hawkins": 2,
-      "Joshua Hawkins": 9
+      "Joshua Hawkins": 6
     }
   },
   {
@@ -5612,7 +5506,7 @@
     ],
     "counts": {
       "Joshua Freund": 3,
-      "Joshua Friend": 6
+      "Joshua Friend": 4
     }
   },
   {
@@ -5651,7 +5545,7 @@
       "Joshua Kupp"
     ],
     "counts": {
-      "Joshua Kopp": 4,
+      "Joshua Kopp": 3,
       "Joshua Kupp": 1
     }
   },
@@ -5746,7 +5640,7 @@
       "Justin Gold"
     ],
     "counts": {
-      "Justin Bold": 3,
+      "Justin Bold": 2,
       "Justin Bond": 1,
       "Justin Gold": 1
     }
@@ -5797,7 +5691,7 @@
       "Justin Kelly"
     ],
     "counts": {
-      "Justin Kelley": 20,
+      "Justin Kelley": 18,
       "Justin Kelly": 3
     }
   },
@@ -5838,7 +5732,7 @@
     ],
     "counts": {
       "Katerina Lukina": 5,
-      "Yekaterina Lukina": 10
+      "Yekaterina Lukina": 9
     }
   },
   {
@@ -5898,27 +5792,17 @@
     ],
     "counts": {
       "Keith Murrel": 1,
-      "Keith Murrell": 15
+      "Keith Murrell": 13
     }
   },
   {
-    "canonical": "Kelley Slay",
+    "canonical": "Kenneth Bailey",
     "variants": [
-      "Kelly Slay"
-    ],
-    "counts": {
-      "Kelley Slay": 3,
-      "Kelly Slay": 1
-    }
-  },
-  {
-    "canonical": "Kenneth Baime",
-    "variants": [
-      "Kenneth Bailey"
+      "Kenneth Baime"
     ],
     "counts": {
       "Kenneth Bailey": 4,
-      "Kenneth Baime": 6
+      "Kenneth Baime": 4
     }
   },
   {
@@ -5958,7 +5842,7 @@
       "Kenny Nicoletti"
     ],
     "counts": {
-      "Kenneth Nicoletti": 10,
+      "Kenneth Nicoletti": 9,
       "Kenneth Nikoletti": 1,
       "Kenny Nicoletti": 5
     }
@@ -6161,7 +6045,7 @@
       "Kristopher Burchfiels"
     ],
     "counts": {
-      "Kristopher Burchfield": 25,
+      "Kristopher Burchfield": 19,
       "Kristopher Burchfiels": 1
     }
   },
@@ -6171,28 +6055,8 @@
       "Kyle Grisby"
     ],
     "counts": {
-      "Kyle Grigsby": 7,
+      "Kyle Grigsby": 6,
       "Kyle Grisby": 1
-    }
-  },
-  {
-    "canonical": "Kyle Kreikemeier",
-    "variants": [
-      "Kyle Kreikmeier"
-    ],
-    "counts": {
-      "Kyle Kreikemeier": 3,
-      "Kyle Kreikmeier": 1
-    }
-  },
-  {
-    "canonical": "Kyle Schmitt",
-    "variants": [
-      "Kyle Schmit"
-    ],
-    "counts": {
-      "Kyle Schmit": 1,
-      "Kyle Schmitt": 2
     }
   },
   {
@@ -6203,16 +6067,6 @@
     "counts": {
       "Kyle Stricken": 1,
       "Kyle Stricklen": 1
-    }
-  },
-  {
-    "canonical": "La Ron Maynor",
-    "variants": [
-      "Laron Maynor"
-    ],
-    "counts": {
-      "La Ron Maynor": 1,
-      "Laron Maynor": 1
     }
   },
   {
@@ -6374,7 +6228,7 @@
     ],
     "counts": {
       "Linh Phan": 3,
-      "Minh Phan": 19
+      "Minh Phan": 17
     }
   },
   {
@@ -6388,18 +6242,18 @@
     }
   },
   {
-    "canonical": "Lucus Drummonds",
+    "canonical": "Lucus Drummond",
     "variants": [
       "Locus Drummonds",
       "Louis Drummonds",
-      "Lucus Drummond",
+      "Lucus Drummonds",
       "Lucus Dummonds"
     ],
     "counts": {
       "Locus Drummonds": 1,
       "Louis Drummonds": 1,
       "Lucus Drummond": 4,
-      "Lucus Drummonds": 4,
+      "Lucus Drummonds": 2,
       "Lucus Dummonds": 1
     }
   },
@@ -6409,7 +6263,7 @@
       "Logan Gate"
     ],
     "counts": {
-      "Logan Cate": 4,
+      "Logan Cate": 1,
       "Logan Gate": 1
     }
   },
@@ -6673,7 +6527,7 @@
       "Mark Lafata*"
     ],
     "counts": {
-      "Mark Lafata": 22,
+      "Mark Lafata": 20,
       "Mark Lafata*": 1
     }
   },
@@ -6862,16 +6716,6 @@
     }
   },
   {
-    "canonical": "Matthew Sundberg",
-    "variants": [
-      "Matt Sundberg"
-    ],
-    "counts": {
-      "Matt Sundberg": 1,
-      "Matthew Sundberg": 1
-    }
-  },
-  {
     "canonical": "Matthew Allen",
     "variants": [
       "Matthew Allen*"
@@ -6898,7 +6742,7 @@
     ],
     "counts": {
       "Matthew Cook": 1,
-      "Matthew Snook": 10
+      "Matthew Snook": 9
     }
   },
   {
@@ -7037,7 +6881,7 @@
       "Melissa Ring"
     ],
     "counts": {
-      "Melissa King": 10,
+      "Melissa King": 8,
       "Melissa Ring": 1
     }
   },
@@ -7078,7 +6922,7 @@
     ],
     "counts": {
       "Micahel Briggs": 1,
-      "Michael Briggs": 13
+      "Michael Briggs": 11
     }
   },
   {
@@ -7088,7 +6932,7 @@
     ],
     "counts": {
       "Michael Adams": 4,
-      "Michael McAdams": 9
+      "Michael McAdams": 7
     }
   },
   {
@@ -7193,6 +7037,16 @@
     "counts": {
       "Michael Bohnhoff": 1,
       "Michael Bohnhoft": 1
+    }
+  },
+  {
+    "canonical": "Michael Friedman",
+    "variants": [
+      "Michael Bridgman"
+    ],
+    "counts": {
+      "Michael Bridgman": 1,
+      "Michael Friedman": 3
     }
   },
   {
@@ -7314,16 +7168,6 @@
     }
   },
   {
-    "canonical": "Mitchell Friedman",
-    "variants": [
-      "Michael Friedman"
-    ],
-    "counts": {
-      "Michael Friedman": 3,
-      "Mitchell Friedman": 3
-    }
-  },
-  {
     "canonical": "Michael P. Harris",
     "variants": [
       "Michael Harris",
@@ -7377,16 +7221,6 @@
     "counts": {
       "Michael Hole": 1,
       "Michael Holmes": 1
-    }
-  },
-  {
-    "canonical": "Michael Inmon",
-    "variants": [
-      "Michael Ison"
-    ],
-    "counts": {
-      "Michael Inmon": 1,
-      "Michael Ison": 1
     }
   },
   {
@@ -7812,6 +7646,16 @@
     }
   },
   {
+    "canonical": "Nancy Birnbaum",
+    "variants": [
+      "Nancy Bimbaum"
+    ],
+    "counts": {
+      "Nancy Bimbaum": 1,
+      "Nancy Birnbaum": 1
+    }
+  },
+  {
     "canonical": "Nancy Ezman",
     "variants": [
       "Nancy Ezmon"
@@ -7822,14 +7666,14 @@
     }
   },
   {
-    "canonical": "Nathanial Simmerman",
+    "canonical": "Nathaniel Simmerman",
     "variants": [
       "Nathanial Simmeman",
-      "Nathaniel Simmerman"
+      "Nathanial Simmerman"
     ],
     "counts": {
       "Nathanial Simmeman": 1,
-      "Nathanial Simmerman": 2,
+      "Nathanial Simmerman": 1,
       "Nathaniel Simmerman": 2
     }
   },
@@ -7954,7 +7798,7 @@
     ],
     "counts": {
       "Nicholas Rigbh": 1,
-      "Nicholas Rigby": 29
+      "Nicholas Rigby": 32
     }
   },
   {
@@ -8382,12 +8226,10 @@
   {
     "canonical": "Raymond Rife",
     "variants": [
-      "Ramond Rife",
-      "Raymod Rife"
+      "Ramond Rife"
     ],
     "counts": {
       "Ramond Rife": 1,
-      "Raymod Rife": 1,
       "Raymond Rife": 8
     }
   },
@@ -8619,16 +8461,6 @@
     "counts": {
       "Richard Peterson": 1,
       "Richard Pierson": 1
-    }
-  },
-  {
-    "canonical": "Richard Ramos",
-    "variants": [
-      "Richard Ramsay"
-    ],
-    "counts": {
-      "Richard Ramos": 2,
-      "Richard Ramsay": 1
     }
   },
   {
@@ -8939,8 +8771,8 @@
       "Robert Mitchell"
     ],
     "counts": {
-      "Robert Michael": 10,
-      "Robert Mitchell": 4
+      "Robert Michael": 9,
+      "Robert Mitchell": 2
     }
   },
   {
@@ -9161,7 +8993,7 @@
       "Rosmel Munoz-Cedeno"
     ],
     "counts": {
-      "Rosmel Munoz Cedeno": 4,
+      "Rosmel Munoz Cedeno": 3,
       "Rosmel Munoz-Cedeno": 1
     }
   },
@@ -9203,16 +9035,6 @@
     "counts": {
       "Rudy Wasstig": 1,
       "Rudy Wusstig": 1
-    }
-  },
-  {
-    "canonical": "Russell Thomas",
-    "variants": [
-      "Russ Thomas"
-    ],
-    "counts": {
-      "Russ Thomas": 1,
-      "Russell Thomas": 1
     }
   },
   {
@@ -9285,16 +9107,6 @@
     "counts": {
       "Ryan Pham": 2,
       "Ryan Phan": 1
-    }
-  },
-  {
-    "canonical": "Ryan Winter",
-    "variants": [
-      "Ryan Witler"
-    ],
-    "counts": {
-      "Ryan Winter": 1,
-      "Ryan Witler": 1
     }
   },
   {
@@ -9458,12 +9270,10 @@
   {
     "canonical": "Scott Buller",
     "variants": [
-      "Scott Butler",
       "Scott Fuller"
     ],
     "counts": {
-      "Scott Buller": 15,
-      "Scott Butler": 1,
+      "Scott Buller": 13,
       "Scott Fuller": 2
     }
   },
@@ -9533,20 +9343,8 @@
       "Sergil Borysevych"
     ],
     "counts": {
-      "Sergii Borysevych": 3,
+      "Sergii Borysevych": 2,
       "Sergil Borysevych": 2
-    }
-  },
-  {
-    "canonical": "Seth Frederici",
-    "variants": [
-      "Seth Frederice",
-      "Seth Frederict"
-    ],
-    "counts": {
-      "Seth Frederice": 1,
-      "Seth Frederici": 8,
-      "Seth Frederict": 1
     }
   },
   {
@@ -9576,7 +9374,7 @@
     ],
     "counts": {
       "Shane Sparks": 4,
-      "Shawn Sparks": 4
+      "Shawn Sparks": 2
     }
   },
   {
@@ -9793,7 +9591,7 @@
       "Stephen Buell"
     ],
     "counts": {
-      "Stephen Bell": 4,
+      "Stephen Bell": 3,
       "Stephen Buell": 1
     }
   },
@@ -9855,16 +9653,6 @@
     "counts": {
       "Stephen Pheasant": 1,
       "Steven Pheasant": 1
-    }
-  },
-  {
-    "canonical": "Stephen Rewak",
-    "variants": [
-      "Steven Rewak"
-    ],
-    "counts": {
-      "Stephen Rewak": 1,
-      "Steven Rewak": 1
     }
   },
   {
@@ -9958,16 +9746,6 @@
     }
   },
   {
-    "canonical": "Steven Spratlen",
-    "variants": [
-      "Steven Spratten"
-    ],
-    "counts": {
-      "Steven Spratlen": 1,
-      "Steven Spratten": 1
-    }
-  },
-  {
     "canonical": "Steven Wampler",
     "variants": [
       "Steven Walker"
@@ -10024,7 +9802,7 @@
       "Teraknn Karnchanakphan"
     ],
     "counts": {
-      "Tana Karnchanakphan": 5,
+      "Tana Karnchanakphan": 3,
       "Teraknn Karnchanakphan": 1,
       "Terakun Karnchanakphan": 6
     }
@@ -10057,7 +9835,7 @@
       "Taylorhoward"
     ],
     "counts": {
-      "Taylor Howard": 27,
+      "Taylor Howard": 24,
       "Taylorhoward": 1
     }
   },
@@ -10088,7 +9866,7 @@
       "Terakun Karnchanankphan"
     ],
     "counts": {
-      "Teerakun Karnchanakphan": 7,
+      "Teerakun Karnchanakphan": 6,
       "Terakun Karnchanacphan": 1,
       "Terakun Karnchanankphan": 1
     }
@@ -10183,7 +9961,7 @@
       "Thomas Hudson"
     ],
     "counts": {
-      "Thomas Houston": 9,
+      "Thomas Houston": 8,
       "Thomas Hudson": 1
     }
   },
@@ -10369,18 +10147,18 @@
     ],
     "counts": {
       "Timothy Dorwiler": 1,
-      "Timothy Dorzweiler": 6,
-      "Timothy Dorzweller": 2
+      "Timothy Dorzweiler": 5,
+      "Timothy Dorzweller": 1
     }
   },
   {
-    "canonical": "Timothy Garles",
+    "canonical": "Timothy Earls",
     "variants": [
-      "Timothy Earls"
+      "Timothy Garles"
     ],
     "counts": {
       "Timothy Earls": 4,
-      "Timothy Garles": 5
+      "Timothy Garles": 3
     }
   },
   {
@@ -10412,7 +10190,7 @@
       "Timothy Niles"
     ],
     "counts": {
-      "Timothy Miles": 3,
+      "Timothy Miles": 2,
       "Timothy Miller": 1,
       "Timothy Niles": 2
     }
@@ -10458,13 +10236,13 @@
     }
   },
   {
-    "canonical": "Timothy Vavuris",
+    "canonical": "Tj Schulman",
     "variants": [
-      "Timothy Vu"
+      "Tj Shulman"
     ],
     "counts": {
-      "Timothy Vavuris": 1,
-      "Timothy Vu": 3
+      "Tj Schulman": 1,
+      "Tj Shulman": 1
     }
   },
   {
@@ -10533,7 +10311,7 @@
       "Tony Briney"
     ],
     "counts": {
-      "Tony Birney": 12,
+      "Tony Birney": 9,
       "Tony Briney": 1
     }
   },
@@ -10595,7 +10373,7 @@
       "Trenton Wilson"
     ],
     "counts": {
-      "Trent Wilson": 28,
+      "Trent Wilson": 25,
       "Trenton Wilson": 1
     }
   },
@@ -10700,13 +10478,13 @@
     }
   },
   {
-    "canonical": "Vinh Nguyen",
+    "canonical": "Vihn Nguyen",
     "variants": [
-      "Vihn Nguyen"
+      "Vinh Nguyen"
     ],
     "counts": {
       "Vihn Nguyen": 1,
-      "Vinh Nguyen": 2
+      "Vinh Nguyen": 1
     }
   },
   {
@@ -10780,6 +10558,16 @@
     }
   },
   {
+    "canonical": "Walter Vanschaick",
+    "variants": [
+      "Walter Vanshaick"
+    ],
+    "counts": {
+      "Walter Vanschaick": 1,
+      "Walter Vanshaick": 1
+    }
+  },
+  {
     "canonical": "Warren Vedikago",
     "variants": [
       "Warren Vedilago"
@@ -10848,7 +10636,7 @@
     "counts": {
       "Wiliam Stanford": 1,
       "William Standford": 1,
-      "William Stanford": 29
+      "William Stanford": 27
     }
   },
   {
@@ -10872,13 +10660,23 @@
     }
   },
   {
+    "canonical": "William Underdown",
+    "variants": [
+      "Will Underdown"
+    ],
+    "counts": {
+      "Will Underdown": 1,
+      "William Underdown": 1
+    }
+  },
+  {
     "canonical": "William Wagoner",
     "variants": [
       "Will Wagoner"
     ],
     "counts": {
       "Will Wagoner": 1,
-      "William Wagoner": 13
+      "William Wagoner": 12
     }
   },
   {
@@ -10928,12 +10726,10 @@
   {
     "canonical": "William Berry",
     "variants": [
-      "William Beer",
-      "William Behle"
+      "William Beer"
     ],
     "counts": {
       "William Beer": 2,
-      "William Behle": 1,
       "William Berry": 2
     }
   },
@@ -11010,7 +10806,7 @@
     "counts": {
       "William Ellis": 2,
       "William Enis": 1,
-      "William Willis": 4
+      "William Willis": 3
     }
   },
   {
@@ -11286,7 +11082,7 @@
     ],
     "counts": {
       "Zhou Liu": 1,
-      "Zhuo Liu": 6
+      "Zhuo Liu": 4
     }
   },
   {
