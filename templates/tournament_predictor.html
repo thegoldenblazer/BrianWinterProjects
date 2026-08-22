@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+{% block title %}Time Predictor — Brian Winter Projects{% endblock %}
+{% block nav_tournament_predictor %}active{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block head %}
+<style>
+  .tp-wrap { max-width: 620px; margin: 0 auto; }
+  .tp-card {
+    background: var(--rg-surface, #16161f);
+    border: 1px solid var(--rg-border, #2a2a3a);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .tp-field { margin-bottom: 1.1rem; }
+  .tp-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: .4rem;
+    color: var(--text-primary);
+    font-size: .9rem;
+  }
+  .tp-input, .tp-select {
+    width: 100%;
+    padding: .55rem .7rem;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--rg-border, #2a2a3a);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s var(--ease);
+  }
+  .tp-input:focus, .tp-select:focus {
+    border-color: var(--rg-blue);
+    box-shadow: 0 0 0 3px rgba(78,168,222,.12);
+  }
+  .tp-time-row { display: flex; gap: .5rem; }
+  .tp-time-row .tp-select { flex: 1; }
+  /* Info tooltip */
+  .tp-info {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; margin-left: .35rem;
+    font-size: .7rem; font-weight: 700; font-style: normal;
+    color: var(--rg-black, #0d0d12); background: var(--text-secondary);
+    border-radius: 50%; cursor: help; position: relative;
+  }
+  .tp-info::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%);
+    background: #0d0d12; color: var(--text-primary);
+    border: 1px solid var(--rg-border, #2a2a3a);
+    padding: .35rem .6rem; border-radius: var(--radius-sm);
+    font-size: .75rem; font-weight: 500; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .15s var(--ease);
+    z-index: 10;
+  }
+  .tp-info:hover::after { opacity: 1; }
+  /* Blind readouts in step 2 */
+  .tp-readout {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .6rem .8rem; margin-bottom: .6rem;
+    background: rgba(245,183,49,.06);
+    border: 1px solid rgba(245,183,49,.18);
+    border-radius: var(--radius-sm);
+  }
+  .tp-readout__label { color: var(--text-secondary); font-size: .85rem; }
+  .tp-readout__value {
+    font-family: var(--font-heading); font-weight: 700;
+    color: var(--rg-gold); font-size: 1.05rem;
+  }
+  .tp-err { color: var(--rg-red); font-size: .8rem; margin-top: .5rem; min-height: 1rem; }
+  /* Results */
+  .tp-result {
+    text-align: center; padding: 1rem;
+    border-bottom: 1px solid var(--rg-border, #2a2a3a);
+  }
+  .tp-result:last-child { border-bottom: none; }
+  .tp-result__label {
+    color: var(--text-secondary); font-size: .8rem;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .tp-result__range {
+    font-family: var(--font-heading); font-weight: 700;
+    font-size: 1.6rem; color: var(--rg-gold-lt, #ffe08a); margin-top: .25rem;
+  }
+  /* Crystal ball */
+  .tp-ball-stage {
+    text-align: center; padding: 2.5rem 1rem;
+  }
+  .tp-ball {
+    width: 140px; height: 140px; margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%,
+      #dbe9ff 0%, #a9c4ff 18%, #6f8fd6 45%, #3a3a6a 75%, #1a1a30 100%);
+    box-shadow: 0 0 45px rgba(120,150,255,.5), inset 0 0 30px rgba(255,255,255,.25);
+    position: relative;
+    animation: tp-float 3s ease-in-out infinite, tp-glow 1.6s ease-in-out infinite;
+  }
+  .tp-ball::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.35), transparent 40%);
+    animation: tp-spin 2.4s linear infinite;
+    mix-blend-mode: screen;
+  }
+  .tp-ball-base {
+    width: 90px; height: 22px; margin: -6px auto 0;
+    background: linear-gradient(#3a3a4a, #14141c);
+    border-radius: 50% 50% 8px 8px / 80% 80% 8px 8px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.5);
+  }
+  @keyframes tp-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  @keyframes tp-glow {
+    0%,100% { box-shadow: 0 0 40px rgba(120,150,255,.45), inset 0 0 30px rgba(255,255,255,.25); }
+    50% { box-shadow: 0 0 60px rgba(160,120,255,.7), inset 0 0 34px rgba(255,255,255,.35); }
+  }
+  @keyframes tp-spin { to { transform: rotate(360deg); } }
+  .tp-ball-text { color: var(--text-secondary); font-size: .95rem; letter-spacing: .04em; }
+  @media (prefers-reduced-motion: reduce) {
+    .tp-ball, .tp-ball::before { animation: none; }
+  }
+  .hidden { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-rg mt-3">
+  <div class="tp-wrap">
+
+    <div class="text-center mb-3">
+      <h1 class="fw-heading text-gold mb-2" style="font-size:1.7rem;">
+        <span style="margin-right:.35rem;">&#128302;</span> Tournament Time Predictor
+      </h1>
+      <p class="text-secondary" style="font-size:.85rem;">
+        Estimate when a tournament reaches the money, the final table, and the finish.
+      </p>
+    </div>
+
+    <!-- ============ STEP 1: Inputs ============ -->
+    <div class="tp-card" id="tpStep1">
+      <div class="tp-field">
+        <label for="tpStack">Starting Stack</label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpStack" placeholder="e.g. 30000">
+      </div>
+
+      <div class="tp-field">
+        <label for="tpEntries">Entries
+          <i class="tp-info" data-tip="Estimate is fine">i</i>
+        </label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpEntries" placeholder="e.g. 250">
+      </div>
+
+      <div class="tp-field">
+        <label for="tpLevelTime">Level Time (minutes)</label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpLevelTime" placeholder="e.g. 30">
+      </div>
+
+      <div class="tp-field">
+        <label>Starting Time</label>
+        <div class="tp-time-row">
+          <select class="tp-select" id="tpHour" aria-label="Hour"></select>
+          <select class="tp-select" id="tpMinute" aria-label="Minute"></select>
+          <select class="tp-select" id="tpMeridiem" aria-label="AM or PM">
+            <option value="AM">AM</option>
+            <option value="PM" selected>PM</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" class="filter-btn filter-btn--primary" id="tpToStep2"
+              style="width:100%; height:40px;">Calculate Blinds</button>
+      <div class="tp-err" id="tpErr1"></div>
+    </div>
+
+    <!-- ============ STEP 2: Blind -> Level ============ -->
+    <div class="tp-card hidden" id="tpStep2">
+      <p class="text-secondary mb-3" style="font-size:.85rem;">
+        Look up each blind level below on your tournament clock / structure sheet,
+        then enter the corresponding level number. Pick the level closest to the
+        blind shown &mdash; sometimes a level is skipped.
+      </p>
+
+      <div class="tp-readout">
+        <span class="tp-readout__label">In-the-Money Blind (BB)</span>
+        <span class="tp-readout__value" id="tpItmBlind">–</span>
+      </div>
+      <div class="tp-field">
+        <label for="tpItmLevel">What level is this blind?</label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpItmLevel" placeholder="Level #">
+      </div>
+
+      <div class="tp-readout">
+        <span class="tp-readout__label">Final Table Blind (BB)</span>
+        <span class="tp-readout__value" id="tpFtBlind">–</span>
+      </div>
+      <div class="tp-field">
+        <label for="tpFtLevel">What level is this blind?</label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpFtLevel" placeholder="Level #">
+      </div>
+
+      <div class="tp-readout">
+        <span class="tp-readout__label">Finishing Blind (BB)</span>
+        <span class="tp-readout__value" id="tpFinBlind">–</span>
+      </div>
+      <div class="tp-field">
+        <label for="tpFinLevel">What level is this blind?</label>
+        <input type="number" inputmode="numeric" min="1" step="1" class="tp-input"
+               id="tpFinLevel" placeholder="Level #">
+      </div>
+
+      <div style="display:flex; gap:.5rem;">
+        <button type="button" class="filter-btn filter-btn--ghost" id="tpBack1"
+                style="flex:0 0 auto; height:40px;">Back</button>
+        <button type="button" class="filter-btn filter-btn--primary" id="tpPredict"
+                style="flex:1; height:40px;">Gaze into the Crystal Ball</button>
+      </div>
+      <div class="tp-err" id="tpErr2"></div>
+    </div>
+
+    <!-- ============ STEP 3: Crystal ball ============ -->
+    <div class="tp-card hidden" id="tpStep3">
+      <div class="tp-ball-stage">
+        <div class="tp-ball"></div>
+        <div class="tp-ball-base"></div>
+        <div class="tp-ball-text">Consulting the crystal ball&hellip;</div>
+      </div>
+    </div>
+
+    <!-- ============ Results ============ -->
+    <div class="tp-card hidden" id="tpResults">
+      <div class="tp-result">
+        <div class="tp-result__label">Estimated ITM Time</div>
+        <div class="tp-result__range" id="tpResItm">–</div>
+      </div>
+      <div class="tp-result">
+        <div class="tp-result__label">Estimated Final Table Time</div>
+        <div class="tp-result__range" id="tpResFt">–</div>
+      </div>
+      <div class="tp-result">
+        <div class="tp-result__label">Estimated Finish Time</div>
+        <div class="tp-result__range" id="tpResFin">–</div>
+      </div>
+      <button type="button" class="filter-btn filter-btn--ghost" id="tpRestart"
+              style="width:100%; height:40px; margin-top:1rem;">Start Over</button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  "use strict";
+
+  // ---- Populate time dropdowns ----
+  var hourSel = document.getElementById("tpHour");
+  var minSel = document.getElementById("tpMinute");
+  for (var h = 1; h <= 12; h++) {
+    var o = document.createElement("option");
+    o.value = String(h); o.textContent = String(h);
+    if (h === 6) o.selected = true;
+    hourSel.appendChild(o);
+  }
+  for (var m = 0; m < 60; m += 5) {
+    var mo = document.createElement("option");
+    var mm = m < 10 ? "0" + m : String(m);
+    mo.value = String(m); mo.textContent = mm;
+    minSel.appendChild(mo);
+  }
+
+  // ---- ITM blind lookup: starting stack -> ITM big blind ----
+  // Anchor points from spec: 20k->6k, 25k->8k, 30k->10k, 40k->12k
+  var ITM_POINTS = [
+    [20000, 6000],
+    [25000, 8000],
+    [30000, 10000],
+    [40000, 12000]
+  ];
+  function itmBlindForStack(stack) {
+    var pts = ITM_POINTS;
+    if (stack <= pts[0][0]) {
+      // extrapolate below using first segment slope, floor at small positive
+      var s0 = (pts[1][1] - pts[0][1]) / (pts[1][0] - pts[0][0]);
+      return Math.max(500, pts[0][1] + (stack - pts[0][0]) * s0);
+    }
+    if (stack >= pts[pts.length - 1][0]) {
+      var n = pts.length - 1;
+      var sN = (pts[n][1] - pts[n - 1][1]) / (pts[n][0] - pts[n - 1][0]);
+      return pts[n][1] + (stack - pts[n][0]) * sN;
+    }
+    for (var i = 0; i < pts.length - 1; i++) {
+      if (stack >= pts[i][0] && stack <= pts[i + 1][0]) {
+        var t = (stack - pts[i][0]) / (pts[i + 1][0] - pts[i][0]);
+        return pts[i][1] + t * (pts[i + 1][1] - pts[i][1]);
+      }
+    }
+    return stack; // fallback (unreachable)
+  }
+
+  // ---- Discrete big-blind ladder: snap to nearest standard level ----
+  var BLIND_LADDER = [
+    2000, 2500, 3000, 4000, 5000, 6000, 8000, 10000, 12000, 15000,
+    20000, 25000, 30000, 40000, 50000, 60000, 75000, 80000, 100000,
+    125000, 150000, 175000, 200000, 250000
+  ];
+  function snapBlind(v) {
+    var best = BLIND_LADDER[0];
+    var bestDiff = Math.abs(v - best);
+    for (var i = 1; i < BLIND_LADDER.length; i++) {
+      var d = Math.abs(v - BLIND_LADDER[i]);
+      if (d < bestDiff) { bestDiff = d; best = BLIND_LADDER[i]; }
+    }
+    return best;
+  }
+
+  // ---- Big blind formatting ----
+  function fmtBlind(v) {
+    return snapBlind(v).toLocaleString("en-US");
+  }
+
+  // ---- Level -> elapsed minutes (incl. breaks) ----
+  // minutes = level * levelTime + floor(level / 4) * 15
+  function minutesForLevel(level, levelTime) {
+    var breaks = Math.floor(level / 4);
+    return level * levelTime + breaks * 15;
+  }
+
+  // ---- Add minutes to a start time, return "h:mmam/pm" ----
+  function addMinutes(startMinutesOfDay, addMin) {
+    var total = ((startMinutesOfDay + addMin) % 1440 + 1440) % 1440;
+    var h24 = Math.floor(total / 60);
+    var min = total % 60;
+    var mer = h24 >= 12 ? "pm" : "am";
+    var h12 = h24 % 12; if (h12 === 0) h12 = 12;
+    var mm = min < 10 ? "0" + min : String(min);
+    return h12 + ":" + mm + mer;
+  }
+
+  // ---- Build a ±20 minute range string ----
+  function rangeFor(startMinutesOfDay, level, levelTime) {
+    var base = minutesForLevel(level, levelTime);
+    var lo = addMinutes(startMinutesOfDay, base - 20);
+    var hi = addMinutes(startMinutesOfDay, base + 20);
+    return lo + " - " + hi;
+  }
+
+  // ---- State ----
+  var state = {};
+
+  function getStartMinutesOfDay() {
+    var h = parseInt(hourSel.value, 10);
+    var m = parseInt(minSel.value, 10);
+    var mer = document.getElementById("tpMeridiem").value;
+    var h24 = h % 12;
+    if (mer === "PM") h24 += 12;
+    return h24 * 60 + m;
+  }
+
+  function posInt(el) {
+    var v = parseInt(el.value, 10);
+    return (Number.isFinite(v) && v > 0) ? v : null;
+  }
+
+  // ---- Step 1 -> Step 2 ----
+  document.getElementById("tpToStep2").addEventListener("click", function () {
+    var err = document.getElementById("tpErr1");
+    err.textContent = "";
+    var stack = posInt(document.getElementById("tpStack"));
+    var entries = posInt(document.getElementById("tpEntries"));
+    var levelTime = posInt(document.getElementById("tpLevelTime"));
+
+    if (!stack || !entries || !levelTime) {
+      err.textContent = "Please enter positive numbers for stack, entries, and level time.";
+      return;
+    }
+
+    var totalChips = stack * entries;              // not displayed
+    var finishingBlind = totalChips / 40;
+    var finalTableBlind = totalChips / 180;
+    var itmBlind = itmBlindForStack(stack);
+
+    state = {
+      levelTime: levelTime,
+      startMinutes: getStartMinutesOfDay()
+    };
+
+    document.getElementById("tpItmBlind").textContent = fmtBlind(itmBlind);
+    document.getElementById("tpFtBlind").textContent = fmtBlind(finalTableBlind);
+    document.getElementById("tpFinBlind").textContent = fmtBlind(finishingBlind);
+
+    document.getElementById("tpStep1").classList.add("hidden");
+    document.getElementById("tpStep2").classList.remove("hidden");
+  });
+
+  // ---- Back to Step 1 ----
+  document.getElementById("tpBack1").addEventListener("click", function () {
+    document.getElementById("tpStep2").classList.add("hidden");
+    document.getElementById("tpStep1").classList.remove("hidden");
+  });
+
+  // ---- Predict ----
+  document.getElementById("tpPredict").addEventListener("click", function () {
+    var err = document.getElementById("tpErr2");
+    err.textContent = "";
+    var itmLevel = posInt(document.getElementById("tpItmLevel"));
+    var ftLevel = posInt(document.getElementById("tpFtLevel"));
+    var finLevel = posInt(document.getElementById("tpFinLevel"));
+
+    if (!itmLevel || !ftLevel || !finLevel) {
+      err.textContent = "Please enter a level number for each blind.";
+      return;
+    }
+
+    var lt = state.levelTime, sm = state.startMinutes;
+    var resItm = rangeFor(sm, itmLevel, lt);
+    var resFt = rangeFor(sm, ftLevel, lt);
+    var resFin = rangeFor(sm, finLevel, lt);
+
+    // Crystal ball for ~3 seconds, then reveal
+    document.getElementById("tpStep2").classList.add("hidden");
+    document.getElementById("tpStep3").classList.remove("hidden");
+
+    setTimeout(function () {
+      document.getElementById("tpResItm").textContent = resItm;
+      document.getElementById("tpResFt").textContent = resFt;
+      document.getElementById("tpResFin").textContent = resFin;
+      document.getElementById("tpStep3").classList.add("hidden");
+      document.getElementById("tpResults").classList.remove("hidden");
+    }, 3000);
+  });
+
+  // ---- Start over ----
+  document.getElementById("tpRestart").addEventListener("click", function () {
+    document.getElementById("tpResults").classList.add("hidden");
+    document.getElementById("tpStep1").classList.remove("hidden");
+  });
+
+})();
+</script>
+{% endblock %}

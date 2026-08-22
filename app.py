@@ -254,6 +254,11 @@ def table_scout():
     return render_template("table_scout.html")
 
 
+@app.route("/tournament-predictor")
+def tournament_predictor():
+    return render_template("tournament_predictor.html")
+
+
 @app.route("/api/fuzzy-match")
 def api_fuzzy_match():
     """Return close matches for a player name, including exact and 1-letter-off suggestions."""
