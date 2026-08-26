@@ -326,10 +326,11 @@
   }
 
   // ---- Level -> elapsed minutes (incl. breaks) ----
-  // minutes = level * levelTime + floor(level / 4) * 15
+  // A 15-minute break occurs every 2 hours (120 min) of play, regardless of level length.
   function minutesForLevel(level, levelTime) {
-    var breaks = Math.floor(level / 4);
-    return level * levelTime + breaks * 15;
+    var playMinutes = level * levelTime;
+    var breaks = Math.floor(playMinutes / 120);
+    return playMinutes + breaks * 15;
   }
 
   // ---- Add minutes to a start time, return "h:mmam/pm" ----
