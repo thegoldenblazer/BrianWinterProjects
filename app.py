@@ -98,8 +98,9 @@ def leaderboard():
             in_window = []
             for h in p.get("history", []):
                 try:
-                    d = datetime.strptime(h.get("date", "").strip(),
-                                          "%b %d, %Y")
+                    d = datetime.strptime(
+                        _parse_display_date(h.get("date", "")).strip(), "%b %d, %Y"
+                    )
                 except (ValueError, AttributeError):
                     continue
                 if d >= cutoff:
